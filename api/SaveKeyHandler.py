@@ -1,5 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
+from google.appengine.ext.db import Key
 
 from django.utils import simplejson as json
 
