@@ -35,7 +35,7 @@ function CloudKeys() {
               "Create a Key": function() {
                 //var bValid = true;
                 if(that.create_key()) {
-                  $('#dialog-form input').removeClass( "ui-state-error" );
+                  $('#dialog-form input').removeClass("ui-state-error");
                   $(this).dialog("close");
                 }
               },
@@ -117,6 +117,7 @@ function CloudKeys() {
     var that = this;
     var data = {};
     var errors = 0;
+    $('#dialog-form input').removeClass("ui-state-error");
     $('.missing_field').remove();
     var errorMessage = '<span class="missing_field">!</span>';
 
