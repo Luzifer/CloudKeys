@@ -8,5 +8,21 @@ handlers:
   script: handle_incoming_email.py
   login: admin
 
+- url: /js/(.*)
+  static_files: templates/js/\1
+  upload: templates/js/(.*)
+
+- url: /css/(.*)
+  static_files: templates/css/\1
+  upload: templates/css/(.*)
+
+- url: /images/(.*)
+  static_files: templates/images/\1
+  upload: templates/images/(.*)
+
+- url: /favicon.ico
+  static_files: templates/images/favicon.ico
+  upload: templates/images/favicon.ico
+
 - url: /.*
   script: index.py
