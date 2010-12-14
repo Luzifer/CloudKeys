@@ -24,9 +24,10 @@ handlers:
   static_files: templates/images/favicon.ico
   upload: templates/images/favicon.ico
 
-- url: /.*
-  script: index.py
-
 - url: /
   static_files: templates/index.html
   upload: templates/index.html
+
+- url: /.*
+  script: index.py
+
