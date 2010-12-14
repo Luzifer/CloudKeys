@@ -27,9 +27,10 @@ handlers:
 - url: /api/.*
   script: api/api.py
 
-- url: /.*
-  script: index.py
-
 - url: /
   static_files: templates/index.html
   upload: templates/index.html
+
+- url: /.*
+  script: index.py
+
