@@ -16,21 +16,19 @@ class SaveKeyHandler(webapp.RequestHandler):
     if user == None:
       result['status'] = False
       result['message'] = 'User is not logged in'
+      self.response.out.write(json.dumps(result))
+      return
     else:
       key = self.request.get('key')
       password = None
       
       if key != None and key != "":
         password = StoredKey.get(key)
-      else:
-        result['status'] = False
-        result['message'] = 'Key was not set or empty'
       
-      if result['status'] == True:
-        if password == None:
-          password = StoredKey(username = ' ', password = ' ', title = ' ')
+      if password == None:
+        password = StoredKey(username = ' ', password = ' ', title = ' ')
     
-        password.from_request(self.request)
-        password.save()
+      password.from_request(self.request)
+      password.save() 
   
     self.response.out.write(json.dumps(result))
