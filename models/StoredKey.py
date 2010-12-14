@@ -22,3 +22,12 @@ class StoredKey(db.Model):
     result['category'] = self.category
     result['key'] = str(self.key())
     return result
+    
+  def from_request(self, request):
+    self.title = request.get('title')
+    self.password = request.get('password')
+    self.username = request.get('username')
+    self.url = request.get('url')
+    self.note = request.get('note')
+    self.category = request.get('category')
+    
