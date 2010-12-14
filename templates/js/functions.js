@@ -22,18 +22,29 @@ function CloudKeys() {
       $('#content').html(data);
       $('#button_create_key').click(function() {
         $.get('/templates/create_key.html', function(data) {
-          $('#dialog-modal').remove();
-          var message = $('<div id="dialog-modal" title="Create Key">'+ data +'</div>');
+          $('#dialog-form').remove();
+          var message = $('<div id="dialog-form" title="Create Key">'+ data +'</div>');
           $('#content').append(message);
           $("#dialog:ui-dialog").dialog("destroy");
-          $("#dialog-modal").dialog({
-            height: 260,
+          $("#dialog-form").dialog({
+            height: 330,
             modal: true,
             resizable: false,
-            width: 360
+            width: 360,
+            buttons: {
+              "Create a Key": function() {
+                //var bValid = true;
+                if(that.create_key()) {
+                  $('#dialog-form input').removeClass( "ui-state-error" );
+                  $(this).dialog("close");
+                }
+              },
+              Cancel: function() {
+                $(this).dialog("close");
+              }
+            },
           });
           $('#create_save').click(function() {
-            that.create_key();
           });
         });
       });
@@ -48,7 +59,6 @@ function CloudKeys() {
         $('#category_'+ cat).click(function() {
           that.show_category(index);
         });
-        console.log(index, value);
       });
     });
   }
@@ -65,7 +75,24 @@ function CloudKeys() {
       entry += '<p><span id="deleteKey_'+ value.key +'">Delete</span></p>';
       $('#show_keys').append($('<div>'+ entry +'</div>'));
       $('#deleteKey_'+ value.key).click(function() {
-        that.delete_entry(value.key);
+        $('#dialog-confirm').remove();
+        var message = $('<div id="dialog-confirm" title="Delete this item?"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p></div>');
+        $('#content').append(message);
+        $("#dialog-confirm").dialog({
+          resizable: false,
+          height: 240,
+          modal: true,
+          width: 400,
+          buttons: {
+            "Delete": function() {
+              $(this).dialog( "close" );
+              that.delete_entry(value.key);
+            },
+            Cancel: function() {
+              $(this).dialog( "close" );
+            }
+          }
+        });
       });
     });
     $("#show_keys").accordion({
@@ -94,27 +121,27 @@ function CloudKeys() {
     var errorMessage = '<span class="missing_field">!</span>';
 
     if($('#create_title').val() == '') {
-      $(errorMessage).insertAfter($('#create_title'));
+      $('#create_title').addClass("ui-state-error");
       errors = errors + 1;
     }
 
     if($('#create_username').val() == '') {
-      $(errorMessage).insertAfter($('#create_username'));
+      $('#create_username').addClass("ui-state-error");
       errors = errors + 1;
     }
 
     if($('#create_password').val() == '') {
-      $(errorMessage).insertAfter($('#create_password'));
+      $('#create_password').addClass("ui-state-error");
       errors = errors + 1;
     }
 
     if($('#create_password_repeat').val() == '' || $('#create_password_repeat').val() != $('#create_password').val()) {
-      $(errorMessage).insertAfter($('#create_password_repeat'));
+      $('#create_password_repeat').addClass("ui-state-error");
       errors = errors + 1;
     }
 
     if($('#create_url').val() == '') {
-      $(errorMessage).insertAfter($('#create_url'));
+      $('#create_url').addClass("ui-state-error");
       errors = errors + 1;
     }
 
@@ -135,7 +162,9 @@ function CloudKeys() {
           window.setTimeout(function() { that.show_category($('#create_category').val()); }, 1000);
         }
       }, 'json');
+      return true;
     }
+    return false;
   }
 
   this.decrypt_data = function() {
@@ -168,7 +197,6 @@ function CloudKeys() {
               , url: Crypto.AES.decrypt(value.url, that.password)
             });
           });
-          console.log(that.data);
           that.show_list();
         } catch(ex) {
           that.show_password_field();
