@@ -12,8 +12,10 @@ class LoginCheckHandler(webapp.RequestHandler):
     result = {}
     if user == None:
       result['isLoggedIn'] = False
+      result['status'] = True
       result['loginURL'] = users.create_login_url('/')
     else:
       result['isLoggedIn'] = True
+      result['status'] = True
     
     self.response.out.write(json.dumps(result))

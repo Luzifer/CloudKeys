@@ -13,6 +13,7 @@ class GetKeysHandler(webapp.RequestHandler):
     
     if user == None:
       result['status'] = False
+      result['message'] = 'User is not logged in'
     else:
       result['status'] = True
       passwords = StoredKey.all().filter('user = ', user)

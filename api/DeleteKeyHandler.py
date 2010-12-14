@@ -13,12 +13,19 @@ class DeleteKeyHandler(webapp.RequestHandler):
     
     if user == None:
       result['status'] = False
+      result['message'] = 'User is not logged in'
     else:
-      password = StoredKey.get(Key(self.request.get('key')))
-      if password == None:
-        result['status'] = False
+      key = self.request.get('key')
+      if key != "" and key != None:
+        password = StoredKey.get(key)
+        if password == None:
+          result['status'] = False
+          result['message'] = 'Key could not retrieved from database'
+        else:
+          password.delete()
+          result['status'] = True
       else:
-        password.delete()
-        result['status'] = True
+        result['status'] = False
+        result['message'] = 'Key was empty or not set'
   
     self.response.out.write(json.dumps(result))
