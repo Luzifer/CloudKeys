@@ -11,6 +11,7 @@ class SaveKeyHandler(webapp.RequestHandler):
   def post(self):
     user = users.get_current_user()
     result = {}
+    result['status'] = True
     
     if user == None:
       result['status'] = False
@@ -28,7 +29,5 @@ class SaveKeyHandler(webapp.RequestHandler):
     
       password.from_request(self.request)
       password.save()
-      
-      result['status'] = True
   
     self.response.out.write(json.dumps(result))
