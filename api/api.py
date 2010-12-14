@@ -8,6 +8,7 @@ from api.LoginCheckHandler import LoginCheckHandler
 from api.GetKeysHandler import GetKeysHandler
 from api.SaveKeyHandler import SaveKeyHandler
 from api.DeleteKeyHandler import DeleteKeyHandler
+from api.GetLogoutURLHandler import GetLogoutURLHandler
 
 def main():
   application = webapp.WSGIApplication([
@@ -16,6 +17,7 @@ def main():
     ('/api/getKeys', GetKeysHandler),
     ('/api/saveKey', SaveKeyHandler),
     ('/api/deleteKey', DeleteKeyHandler),
+    ('/api/getLogoutURL', GetLogoutURLHandler),
   ], debug=True)
   util.run_wsgi_app(application)
 
