@@ -20,7 +20,7 @@ class StoredKey(db.Model):
     result['url'] = self.url
     result['note'] = self.note
     result['category'] = self.category
-    result['lastChange'] = self.lastChange
+    result['lastChange'] = str(self.lastChange)
     result['key'] = str(self.key())
     return result
     
