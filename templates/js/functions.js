@@ -27,7 +27,7 @@ function CloudKeys() {
           $('#content').append(message);
           $("#dialog:ui-dialog").dialog("destroy");
           $("#dialog-form").dialog({
-            height: 330,
+            height: 380,
             modal: true,
             resizable: false,
             width: 360,
