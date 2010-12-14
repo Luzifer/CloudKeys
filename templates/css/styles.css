@@ -2,8 +2,9 @@
 #list_keys #keys { margin:10px auto; width: 600px; }
 #list_keys #keys h3 { padding-left: 30px; }
 
-body { font-family: arial, helvetica, sans-serif; font-size:10pt; }
+body { font-family: arial, helvetica, sans-serif; font-size:11pt; }
 h1 { margin:10px auto; width:600px; border:1px solid #ddd; text-align:center; color: #111; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; padding:4px 0; }
 #button_create_key { background-image:url('/images/add.png'); background-repeat:no-repeat; padding-left:1.2em; }
 div[id^="category_"] { background-image:url('/images/book.png'); background-repeat:no-repeat; padding-left:1.2em; }
 #password_field { width:600px; margin: 10px auto; text-align:center; border:1px solid #ddd; text-align:center; color: #111; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; padding:4px 0; }
+.ui-widget { font-size:1em !important; }
