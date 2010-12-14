@@ -119,7 +119,11 @@ function CloudKeys() {
     }
 
     if(errors == 0) {
-      data.category = Crypto.AES.encrypt($('#create_category').val(), this.password);
+      var cat = '';
+      if($('#create_category').val() != '') {
+        cat = Crypto.AES.encrypt($('#create_category').val(), this.password);
+      }
+      data.category = cat;
       data.title = Crypto.AES.encrypt($('#create_title').val(), this.password);
       data.username = Crypto.AES.encrypt($('#create_username').val(), this.password);
       data.password = Crypto.AES.encrypt($('#create_password').val(), this.password);
@@ -150,9 +154,14 @@ function CloudKeys() {
               that.data[category] = [];
             }
 
+            var enccat = '';
+            if(value.category != '') {
+              enccat = Crypto.AES.decrypt(value.category, that.password);
+            }
+
             that.data[category].push({
                 key: value.key
-              , category: Crypto.AES.decrypt(value.category, that.password)
+              , category: enccat
               , title: Crypto.AES.decrypt(value.title, that.password)
               , username: Crypto.AES.decrypt(value.username, that.password)
               , password: Crypto.AES.decrypt(value.password, that.password)
