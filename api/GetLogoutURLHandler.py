@@ -12,6 +12,7 @@ class GetLogoutURLHandler(webapp.RequestHandler):
     result = {}
     if user == None:
       result['isLoggedIn'] = False
+      result['message'] = 'User is not logged in'
     else:
       result['isLoggedIn'] = True
       result['logoutURL'] = users.create_logout_url('/')
