@@ -20,4 +20,5 @@ class StoredKey(db.Model):
     result['url'] = self.url
     result['note'] = self.note
     result['category'] = self.category
+    result['key'] = str(self.key())
     return result
