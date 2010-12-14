@@ -29,3 +29,7 @@ handlers:
 
 - url: /.*
   script: index.py
+
+- url: /
+  static_files: templates/index.html
+  upload: templates/index.html
