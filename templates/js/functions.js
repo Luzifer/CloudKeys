@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 function CloudKeys() {
   this.password = '';
-  this.data = [];
+  this.data = {};
 
   this.show_list = function() {
     var that = this;
@@ -22,6 +22,7 @@ function CloudKeys() {
       $('#content').html(data);
       $('#button_create_key').click(function() {
         $.get('/templates/create_key.html', function(data) {
+          $('#dialog-modal').remove();
           var message = $('<div id="dialog-modal" title="Create Key">'+ data +'</div>');
           $('#content').append(message);
           $("#dialog:ui-dialog").dialog("destroy");
@@ -36,6 +37,52 @@ function CloudKeys() {
           });
         });
       });
+
+      $.each(that.data, function(index, value) {
+        var label = index;
+        if(index == '__empty__') {
+          label = 'Empty Category';
+        }
+        cat = index.replace(' ', '_');
+        $('#categories').append($('<div id="category_'+ cat +'">'+ label +'</div>'));
+        $('#category_'+ cat).click(function() {
+          that.show_category(index);
+        });
+        console.log(index, value);
+      });
+    });
+  }
+
+  this.show_category = function(index) {
+    var that = this;
+    $('#keys').html('<div id="show_keys"></div>');
+    $.each(this.data[index], function(index, value) {
+      $('#show_keys').append($('<h3>'+ value.title +'</h3>'));
+      var entry = '<p>Username: '+ value.username +'</p>';
+      entry += '<p>Password: '+ value.password +'</p>';
+      entry += '<p>Category: '+ value.category +'</p>';
+      entry += '<p>Url: '+ value.url +'</p>';
+      entry += '<p><span id="deleteKey_'+ value.key +'">Delete</span></p>';
+      $('#show_keys').append($('<div>'+ entry +'</div>'));
+      $('#deleteKey_'+ value.key).click(function() {
+        that.delete_entry(value.key);
+      });
+    });
+    $("#show_keys").accordion({
+      collapsible: true, active: false
+    });
+    $('#show_keys .head').click(function() {
+      $(this).next().toggle('slow');
+      return false;
+    }).next().hide();
+  }
+
+  this.delete_entry = function(key) {
+    var that = this;
+    $.getJSON('/api/deleteKey?key='+ key, function(data) {
+      if(data.status == true) {
+        that.decrypt_data();
+      }
     });
   }
 
@@ -72,12 +119,17 @@ function CloudKeys() {
     }
 
     if(errors == 0) {
+      data.category = Crypto.AES.encrypt($('#create_category').val(), this.password);
       data.title = Crypto.AES.encrypt($('#create_title').val(), this.password);
       data.username = Crypto.AES.encrypt($('#create_username').val(), this.password);
       data.password = Crypto.AES.encrypt($('#create_password').val(), this.password);
       data.url = Crypto.AES.encrypt($('#create_url').val(), this.password);
       $.post('/api/saveKey', data, function(data) {
-        alert(data);
+        if(data.status == true) {
+          that.decrypt_data();
+          $("#dialog-modal").dialog('close');
+          window.setTimeout(function() { that.show_category($('#create_category').val()); }, 1000);
+        }
       }, 'json');
     }
   }
@@ -87,20 +139,31 @@ function CloudKeys() {
     $.getJSON('/api/getKeys', function(data) {
       if(data.status == true) {
         try {
+          that.data = {};
           $.each(data.passwords, function(index, value) {
-            console.log(index);
-            console.log(value);
-            that.data.push({
+            var category = '__empty__';
+            if(value.category != '') {
+              category = Crypto.AES.decrypt(value.category, that.password);
+            }
+
+            if(typeof(that.data[category]) == 'undefined') {
+              that.data[category] = [];
+            }
+
+            that.data[category].push({
                 key: value.key
+              , category: Crypto.AES.decrypt(value.category, that.password)
               , title: Crypto.AES.decrypt(value.title, that.password)
               , username: Crypto.AES.decrypt(value.username, that.password)
               , password: Crypto.AES.decrypt(value.password, that.password)
               , url: Crypto.AES.decrypt(value.url, that.password)
             });
           });
+          console.log(that.data);
           that.show_list();
         } catch(ex) {
           that.show_password_field();
+          $('#dialog-modal').remove();
           var message = $('<div id="dialog-modal" title="Error"><p>Failed to decrypt your keys. Please check your password!</p></div>');
           $('#content').append(message);
           $("#dialog:ui-dialog").dialog("destroy");
