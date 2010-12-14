@@ -16,7 +16,7 @@ class SaveKeyHandler(webapp.RequestHandler):
       result['status'] = False
     else:
       key = self.request.get('key')
-      if key != None:
+      if key != None and key != "":
         password = StoredKey.get(key)
         if password == None:
           password = StoredKey(username = '', password = '', title = '')
