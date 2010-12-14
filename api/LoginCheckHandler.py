@@ -6,7 +6,7 @@ from google.appengine.api import users
 from django.utils import simplejson as json
 
 class LoginCheckHandler(webapp.RequestHandler):
-  """Lists all texts of type post to display for example on start page"""
+  """Checks wether a user is logged in and returns the login url if not"""
   def get(self):
     user = users.get_current_user()
     result = {}
