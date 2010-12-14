@@ -23,11 +23,12 @@ class SaveKeyHandler(webapp.RequestHandler):
         password = StoredKey.get(key)
       else:
         result['status'] = False
-        
-      if password == None:
-        password = StoredKey(username = '', password = '', title = '')
+      
+      if result['status'] == True:
+        if password == None:
+          password = StoredKey(username = ' ', password = ' ', title = ' ')
     
-      password.from_request(self.request)
-      password.save()
+        password.from_request(self.request)
+        password.save()
   
     self.response.out.write(json.dumps(result))
