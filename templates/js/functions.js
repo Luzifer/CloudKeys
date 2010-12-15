@@ -305,6 +305,12 @@ function CloudKeys() {
         that.password = $('#input_password').val();
         that.decrypt_data();
       });
+      $('#input_password').focus();
+      $('#input_password').bind('keypress', function(e){
+        if(e.which == 13){
+          $('#password_submit').click();
+        }
+      });
     });
   }
 }
