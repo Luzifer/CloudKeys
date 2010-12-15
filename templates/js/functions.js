@@ -167,6 +167,12 @@ function CloudKeys() {
           height: 240,
           modal: true,
           width: 400,
+          open: function(event, ui) {
+            $('#show_keys span.copy_to_clipboard').hide();
+          },
+          close: function(event, ui) {
+            $('span.copy_to_clipboard').show();
+          },
           buttons: {
             "Delete": function() {
               $(this).dialog( "close" );
