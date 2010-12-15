@@ -40,6 +40,12 @@ function CloudKeys() {
             modal: true,
             resizable: false,
             width: 460,
+            open: function(event, ui) {
+              $('span.copy_to_clipboard').hide();
+            },
+            close: function(event, ui) {
+              $('span.copy_to_clipboard').show();
+            },
             buttons: {
               "Create a Key": function() {
                 if(that.create_key()) {
@@ -81,12 +87,14 @@ function CloudKeys() {
       entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
       entry += '<p>Category: '+ value.category +'</p>';
       entry += '<p id="url_'+ value.key +'">Url: '+ value.url +'</p>';
+      entry += '<p id="note_'+ value.key +'">Note: '+ value.note +'</p>';
       entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
 
       $('#show_keys').append($('<div>'+ entry +'</div>'));
       $('#password_'+ value.key).append($(that.get_copy_code(value.password)));
       $('#username_'+ value.key).append($(that.get_copy_code(value.username)));
       $('#url_'+ value.key).append($(that.get_copy_code(value.url)));
+      $('#note_'+ value.key).append($(that.get_copy_code(value.note)));
 
       $("#editKey_"+ value.key +", #deleteKey_"+ value.key, "#keys").button();
       $('#editKey_'+ value.key).click(function() {
@@ -101,24 +109,33 @@ function CloudKeys() {
           $('#create_password').val(value.password);
           $('#create_password_repeat').val(value.password);
           $('#create_url').val(value.url);
+          $('#create_note').val(value.note);
 
           $(that.get_copy_code(value.password)).insertAfter($('#create_password'));
           $(that.get_copy_code(value.username)).insertAfter($('#create_username'));
           $(that.get_copy_code(value.url)).insertAfter($('#create_url'));
+          $(that.get_copy_code(value.note)).insertAfter($('#create_note'));
 
           $('<input type="hidden" id="edit_key" value="'+ value.key +'" />').insertAfter($('#create_url'));
 
           $("#dialog:ui-dialog").dialog("destroy");
           $("#dialog-form").dialog({
-            height: 380,
+            height: 440,
             modal: true,
             resizable: false,
-            width: 460,
+            width: 470,
+            open: function(event, ui) {
+              $('span.copy_to_clipboard').hide();
+            },
+            close: function(event, ui) {
+              $('span.copy_to_clipboard').show();
+            },
             buttons: {
               "Edit Key": function() {
                 if(that.save_key()) {
                   $('#dialog-form input').removeClass("ui-state-error");
                   $(this).dialog("close");
+                  $('span.copy_to_clipboard').show();
                 }
               },
               Cancel: function() {
@@ -194,11 +211,6 @@ function CloudKeys() {
       errors = errors + 1;
     }
 
-    //if($('#create_url').val() == '') {
-    //  $('#create_url').addClass("ui-state-error");
-    //  errors = errors + 1;
-    //}
-
     return errors;
   }
 
@@ -213,6 +225,7 @@ function CloudKeys() {
     data.username = Crypto.AES.encrypt($('#create_username').val(), this.password);
     data.password = Crypto.AES.encrypt($('#create_password').val(), this.password);
     data.url = Crypto.AES.encrypt($('#create_url').val(), this.password);
+    data.note = Crypto.AES.encrypt($('#create_note').val(), this.password);
 
     return data;
   }
@@ -279,6 +292,7 @@ function CloudKeys() {
               , username: Crypto.AES.decrypt(value.username, that.password)
               , password: Crypto.AES.decrypt(value.password, that.password)
               , url: Crypto.AES.decrypt(value.url, that.password)
+              , note: Crypto.AES.decrypt(value.note, that.password)
             });
           });
           that.show_list();
