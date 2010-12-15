@@ -16,6 +16,14 @@ function CloudKeys() {
   this.password = '';
   this.data = {};
 
+  this.get_copy_code = function(value) {
+    var code = '<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="110" height="14" id="clippy">';
+    code += '<param name="movie" value="/js/clippy.swf"/><param name="allowScriptAccess" value="always" /><param name="quality" value="high" />';
+    code += '<param name="scale" value="noscale" /><param NAME="FlashVars" value="text='+ value +'"><param name="bgcolor" value="#ffffff">';
+    code += '<embed src="/js/clippy.swf" width="110" height="14" name="clippy" quality="high" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" FlashVars="text='+ value +'" bgcolor="#ffffff" /></object>';
+    return code;
+  }
+
   this.show_list = function() {
     var that = this;
     $.get('/templates/list_keys.html', function(data) {
@@ -31,7 +39,7 @@ function CloudKeys() {
             height: 380,
             modal: true,
             resizable: false,
-            width: 360,
+            width: 460,
             buttons: {
               "Create a Key": function() {
                 if(that.create_key()) {
@@ -69,12 +77,17 @@ function CloudKeys() {
     $('#keys').html('<div id="show_keys"></div>');
     $.each(this.data[index], function(index, value) {
       $('#show_keys').append($('<h3>'+ value.title +'</h3>'));
-      var entry = '<p>Username: '+ value.username +'</p>';
-      entry += '<p>Password: <i>hidden</i></p>';
+      var entry = '<p id="username_'+ value.key +'">Username: '+ value.username +'</p>';
+      entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
       entry += '<p>Category: '+ value.category +'</p>';
-      entry += '<p>Url: '+ value.url +'</p>';
+      entry += '<p id="url_'+ value.key +'">Url: '+ value.url +'</p>';
       entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
+
       $('#show_keys').append($('<div>'+ entry +'</div>'));
+      $('#password_'+ value.key).append($(that.get_copy_code(value.password)));
+      $('#username_'+ value.key).append($(that.get_copy_code(value.username)));
+      $('#url_'+ value.key).append($(that.get_copy_code(value.url)));
+
       $("#editKey_"+ value.key +", #deleteKey_"+ value.key, "#keys").button();
       $('#editKey_'+ value.key).click(function() {
         $.get('/templates/create_key.html', function(data) {
@@ -88,6 +101,11 @@ function CloudKeys() {
           $('#create_password').val(value.password);
           $('#create_password_repeat').val(value.password);
           $('#create_url').val(value.url);
+
+          $(that.get_copy_code(value.password)).insertAfter($('#create_password'));
+          $(that.get_copy_code(value.username)).insertAfter($('#create_username'));
+          $(that.get_copy_code(value.url)).insertAfter($('#create_url'));
+
           $('<input type="hidden" id="edit_key" value="'+ value.key +'" />').insertAfter($('#create_url'));
 
           $("#dialog:ui-dialog").dialog("destroy");
@@ -95,7 +113,7 @@ function CloudKeys() {
             height: 380,
             modal: true,
             resizable: false,
-            width: 360,
+            width: 460,
             buttons: {
               "Edit Key": function() {
                 if(that.save_key()) {
