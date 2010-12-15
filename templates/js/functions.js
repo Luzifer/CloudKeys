@@ -20,6 +20,7 @@ function CloudKeys() {
     var that = this;
     $.get('/templates/list_keys.html', function(data) {
       $('#content').html(data);
+      $('#button_create_key').button();
       $('#button_create_key').click(function() {
         $.get('/templates/create_key.html', function(data) {
           $('#dialog-form').remove();
@@ -56,7 +57,8 @@ function CloudKeys() {
         }
         cat = index.replace(' ', '_');
         $('#categories').append($('<div id="category_'+ cat +'">'+ label +'</div>'));
-        $('#category_'+ cat).click(function() {
+
+        $('#category_'+ cat).button().click(function() {
           that.show_category(index);
         });
       });
@@ -72,8 +74,9 @@ function CloudKeys() {
       entry += '<p>Password: '+ value.password +'</p>';
       entry += '<p>Category: '+ value.category +'</p>';
       entry += '<p>Url: '+ value.url +'</p>';
-      entry += '<p><span id="deleteKey_'+ value.key +'">Delete</span></p>';
+      entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
       $('#show_keys').append($('<div>'+ entry +'</div>'));
+      $("#editKey_"+ value.key +", #deleteKey_"+ value.key, "#keys").button();
       $('#deleteKey_'+ value.key).click(function() {
         $('#dialog-confirm').remove();
         var message = $('<div id="dialog-confirm" title="Delete this item?"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p></div>');
