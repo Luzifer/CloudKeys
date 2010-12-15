@@ -97,7 +97,7 @@ function CloudKeys() {
       var entry = '<p id="username_'+ value.key +'">Username: '+ value.username +'</p>';
       entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
       entry += '<p>Category: '+ value.category +'</p>';
-      entry += '<p id="url_'+ value.key +'">Url: '+ value.url +'</p>';
+      entry += '<p id="url_'+ value.key +'">Url: <a href="'+ value.url +'" target="_blank">'+ value.url +'</a></p>';
       entry += '<p id="note_'+ value.key +'">Note: '+ value.note.replace(/\n/g,'<br />') +'</p>';
       entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
 
