@@ -12,9 +12,19 @@ $(document).ready(function() {
   });
 });
 
+function sortCategory(a, b) {
+  if(a.title == b.title) {
+    return 0;
+  } else if(a.title < b.title) {
+    return -1;
+  }
+  return 1;
+}
+
 function CloudKeys() {
   this.password = '';
   this.data = {};
+  this.data_keys = [];
 
   this.get_copy_code = function(value) {
     var code = '<span class="copy_to_clipboard"><object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="110" height="14" id="clippy">';
@@ -36,10 +46,10 @@ function CloudKeys() {
           $('#content').append(message);
           $("#dialog:ui-dialog").dialog("destroy");
           $("#dialog-form").dialog({
-            height: 380,
+            height: 450,
             modal: true,
             resizable: false,
-            width: 460,
+            width: 350,
             open: function(event, ui) {
               $('span.copy_to_clipboard').hide();
             },
@@ -63,7 +73,8 @@ function CloudKeys() {
         });
       });
 
-      $.each(that.data, function(index, value) {
+      $.each(that.data_keys.sort(), function(id, index) {
+        var value = that.data[index];
         var label = index;
         if(index == '__empty__') {
           label = 'Empty Category';
@@ -81,7 +92,7 @@ function CloudKeys() {
   this.show_category = function(index) {
     var that = this;
     $('#keys').html('<div id="show_keys"></div>');
-    $.each(this.data[index], function(index, value) {
+    $.each(this.data[index].sort(sortCategory), function(index, value) {
       $('#show_keys').append($('<h3>'+ value.title +'</h3>'));
       var entry = '<p id="username_'+ value.key +'">Username: '+ value.username +'</p>';
       entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
@@ -120,7 +131,7 @@ function CloudKeys() {
 
           $("#dialog:ui-dialog").dialog("destroy");
           $("#dialog-form").dialog({
-            height: 440,
+            height: 450,
             modal: true,
             resizable: false,
             width: 470,
@@ -270,6 +281,7 @@ function CloudKeys() {
       if(data.status == true) {
         try {
           that.data = {};
+          that.data_keys = [];
           $.each(data.passwords, function(index, value) {
             var category = '__empty__';
             if(value.category != '') {
@@ -278,6 +290,7 @@ function CloudKeys() {
 
             if(typeof(that.data[category]) == 'undefined') {
               that.data[category] = [];
+              that.data_keys.push(category);
             }
 
             var enccat = '';
