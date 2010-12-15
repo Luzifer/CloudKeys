@@ -13,7 +13,7 @@ class LoginCheckHandler(webapp.RequestHandler):
     if user == None:
       result['isLoggedIn'] = False
       result['status'] = True
-      result['loginURL'] = users.create_login_url('/')
+      result['loginURL'] = users.create_login_url('/', federated_identity='google.com/accounts/o8/id')
     else:
       result['isLoggedIn'] = True
       result['status'] = True
