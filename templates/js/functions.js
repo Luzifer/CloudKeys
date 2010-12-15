@@ -194,10 +194,10 @@ function CloudKeys() {
       errors = errors + 1;
     }
 
-    if($('#create_url').val() == '') {
-      $('#create_url').addClass("ui-state-error");
-      errors = errors + 1;
-    }
+    //if($('#create_url').val() == '') {
+    //  $('#create_url').addClass("ui-state-error");
+    //  errors = errors + 1;
+    //}
 
     return errors;
   }
