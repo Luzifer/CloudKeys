@@ -16,10 +16,10 @@ $(document).ready(function() {
         $('#login_myopenid').click(function() { window.location.href = data.loginURLMyOpenID }).button();
         $("#dialog:ui-dialog").dialog("destroy");
         $("#dialog-modal").dialog({
-          height: 150,
+          height: 160,
           modal: true,
           resizable: false,
-          width: 300,
+          width: 315,
           open: function(event, ui) {
             $('#show_keys span.copy_to_clipboard').hide();
           },
