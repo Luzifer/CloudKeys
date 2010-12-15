@@ -4,7 +4,8 @@
 
 body { font-family: arial, helvetica, sans-serif; font-size:11pt; }
 h1 { margin:10px auto; width:600px; border:1px solid #aaa; text-align:center; color: #111; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; padding:4px 0; }
-#logout { cursor: pointer; margin:0px auto; width:600px; text-align: right; color: #111; padding:4px 0; }
+#header_links { clear: both; margin:0px auto; width:600px; text-align: right; color: #111; padding:4px 0; }
+#logout, #importer { cursor: pointer; float: right; }
 #categories span { background: transparent url('/images/book.png') no-repeat 10px 8px; padding-left: 2em; }
 #categories .ui-button-text, #button_create_key .ui-button-text { text-align: left; width: 170px; }
 #categories .ui-button, #button_create_key { height: 31px; margin-bottom: 0.1em; overflow: hidden; }

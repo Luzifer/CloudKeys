@@ -21,7 +21,7 @@ $(document).ready(function() {
           resizable: false,
           width: 315,
           open: function(event, ui) {
-            $('#show_keys span.copy_to_clipboard').hide();
+            $('.show_keys span.copy_to_clipboard').hide();
           },
           close: function(event, ui) {
             $('span.copy_to_clipboard').show();
@@ -36,7 +36,7 @@ $(document).ready(function() {
 //        return;
       }
     } else {
-      $('<div id="logout">Logout</div>').insertBefore($('h1'));
+      $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="importer">Import |</div></div><br style="clear: both" />').insertBefore($('h1'));
       $('#logout').click(function() {
         window.location.href = data.logoutURL;
       });
@@ -85,7 +85,7 @@ function CloudKeys() {
             resizable: false,
             width: 350,
             open: function(event, ui) {
-              $('#show_keys span.copy_to_clipboard').hide();
+              $('.show_keys span.copy_to_clipboard').hide();
             },
             close: function(event, ui) {
               $('span.copy_to_clipboard').show();
@@ -125,9 +125,16 @@ function CloudKeys() {
 
   this.show_category = function(index) {
     var that = this;
-    $('#keys').html('<div id="show_keys"></div>');
+    cat = index.replace(' ', '_');
+    $('.show_keys').each(function() {
+      var old_key = $(this).hide();
+      window.setTimeout(function() {
+        old_key.remove();
+      }, 300);
+    });
+    $('#keys').prepend('<div id="show_keys_'+ cat +'" class="show_keys"></div>');
     $.each(this.data[index].sort(sortCategory), function(index, value) {
-      $('#show_keys').append($('<h3>'+ value.title +'</h3>'));
+      $('#show_keys_'+ cat).append($('<h3>'+ value.title +'</h3>'));
       var entry = '<p id="username_'+ value.key +'">Username: '+ value.username +'</p>';
       entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
       entry += '<p>Category: '+ value.category +'</p>';
@@ -135,7 +142,7 @@ function CloudKeys() {
       entry += '<p id="note_'+ value.key +'">Note: '+ value.note.replace(/\n/g,'<br />') +'</p>';
       entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
 
-      $('#show_keys').append($('<div>'+ entry +'</div>'));
+      $('#show_keys_'+ cat).append($('<div>'+ entry +'</div>'));
       $('#password_'+ value.key).append($(that.get_copy_code(value.password)));
       $('#username_'+ value.key).append($(that.get_copy_code(value.username)));
       $('#url_'+ value.key).append($(that.get_copy_code(value.url)));
@@ -170,7 +177,7 @@ function CloudKeys() {
             resizable: false,
             width: 470,
             open: function(event, ui) {
-              $('#show_keys span.copy_to_clipboard').hide();
+              $('.show_keys span.copy_to_clipboard').hide();
             },
             close: function(event, ui) {
               $('span.copy_to_clipboard').show();
@@ -202,7 +209,7 @@ function CloudKeys() {
           modal: true,
           width: 400,
           open: function(event, ui) {
-            $('#show_keys span.copy_to_clipboard').hide();
+            $('.show_keys span.copy_to_clipboard').hide();
           },
           close: function(event, ui) {
             $('span.copy_to_clipboard').show();
@@ -219,10 +226,10 @@ function CloudKeys() {
         });
       });
     });
-    $("#show_keys").accordion({
-      collapsible: true, active: false
+    $(".show_keys").accordion({
+      collapsible: true, active: false, animated: false
     });
-    $('#show_keys .head').click(function() {
+    $('.show_keys .head').click(function() {
       $(this).next().toggle('slow');
       return false;
     }).next().hide();
@@ -343,6 +350,70 @@ function CloudKeys() {
               , note: Crypto.AES.decrypt(value.note, that.password)
             });
           });
+          $('#importer').click(function() {
+            $('#dialog-modal').remove();
+            var message = $('<div id="dialog-modal" title="Import from KeePassX"><textarea cols="45" rows="5" id="importer_field"></textarea></div>');
+            $('#content').append(message);
+            $("#dialog:ui-dialog").dialog("destroy");
+            $("#dialog-modal").dialog({
+              height: 240,
+              modal: true,
+              resizable: false,
+              width: 400,
+              open: function(event, ui) {
+                $('.show_keys span.copy_to_clipboard').hide();
+              },
+              close: function(event, ui) {
+                $('span.copy_to_clipboard').show();
+              },
+              buttons: {
+                "Import": function() {
+                  $.xmlDOM($('#importer_field').val()).find('group').each(function() {
+                    var group_name = '';
+                    $(this).find('> title').each(function() {
+                      group_name = $(this).text();
+                    });
+                    $(this).find('> entry').each(function() {
+                      var entry_title = '';
+                      var entry_username = '';
+                      var entry_password = '';
+                      var entry_url = '';
+                      var entry_note = '';
+                      $(this).find('> title').each(function() { entry_title = $(this).text(); });
+                      $(this).find('> username').each(function() { entry_username = $(this).text(); });
+                      $(this).find('> password').each(function() { entry_password = $(this).text(); });
+                      $(this).find('> comment').each(function() { entry_note = $(this).text(); });
+                      $(this).find('> url').each(function() { entry_url = $(this).text(); });
+                      
+                      var data = {};
+                      var cat = '';
+                      if(group_name != '') {
+                        cat = Crypto.AES.encrypt(group_name, that.password);
+                      }
+                      data.category = cat;
+                      data.title = Crypto.AES.encrypt(entry_title, that.password);
+                      data.username = Crypto.AES.encrypt(entry_username, that.password);
+                      data.password = Crypto.AES.encrypt(entry_password, that.password);
+                      data.url = Crypto.AES.encrypt(entry_url, that.password);
+                      data.note = Crypto.AES.encrypt(entry_note, that.password);
+                      
+                      $.post('/api/saveKey', data, function(data) {
+                        if(data.status == true) {
+                          that.decrypt_data();
+                          $("#dialog-modal").dialog('close');
+                          window.setTimeout(function() { that.show_category($('#create_category').val()); }, 1000);
+                        }
+                      }, 'json');
+                    });
+                  });
+                },
+                Cancel: function() {
+                  $(this).dialog("close");
+                }
+              },
+            });
+          });
+
           that.show_list();
         } catch(ex) {
           that.show_password_field();
