@@ -51,7 +51,7 @@ function CloudKeys() {
             resizable: false,
             width: 350,
             open: function(event, ui) {
-              $('span.copy_to_clipboard').hide();
+              $('#show_keys span.copy_to_clipboard').hide();
             },
             close: function(event, ui) {
               $('span.copy_to_clipboard').show();
@@ -136,7 +136,7 @@ function CloudKeys() {
             resizable: false,
             width: 470,
             open: function(event, ui) {
-              $('span.copy_to_clipboard').hide();
+              $('#show_keys span.copy_to_clipboard').hide();
             },
             close: function(event, ui) {
               $('span.copy_to_clipboard').show();
