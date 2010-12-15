@@ -12,3 +12,4 @@ h1 { margin:10px auto; width:600px; border:1px solid #ddd; text-align:center; co
 .ui-widget { font-size:1em !important; }
 
 #create_key input { margin-right: 5px; width: 300px; }
+.copy_to_clipboard { padding-left: 5px; }
