@@ -16,3 +16,4 @@ h1 { margin:10px auto; width:600px; border:1px solid #aaa; text-align:center; co
 #create_key input, #create_key textarea { margin-right: 5px; width: 300px; }
 .copy_to_clipboard { padding-left: 5px; }
 
+h3 span { color: #666666; font-size: 66%; font-style: italic; margin-left: 10px; }

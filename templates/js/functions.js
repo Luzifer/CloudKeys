@@ -137,7 +137,7 @@ function CloudKeys() {
     });
     $('#keys').prepend('<div id="show_keys_'+ cat +'" class="show_keys"></div>');
     $.each(this.data[index].sort(sortCategory), function(index, value) {
-      $('#show_keys_'+ cat).append($('<h3>'+ value.title +'</h3>'));
+      $('#show_keys_'+ cat).append($('<h3>'+ value.title +' <span>'+ value.username +'</span></h3>'));
       var entry = '<p id="username_'+ value.key +'">Username: '+ value.username +'</p>';
       entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
       entry += '<p>Category: '+ value.category +'</p>';
