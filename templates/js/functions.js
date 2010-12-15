@@ -218,6 +218,7 @@ function CloudKeys() {
             "Delete": function() {
               $(this).dialog( "close" );
               that.delete_entry(value.key);
+              window.setTimeout(function() { that.show_category(value.category); }, 1000);
             },
             Cancel: function() {
               $(this).dialog( "close" );
