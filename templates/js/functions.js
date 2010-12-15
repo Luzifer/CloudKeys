@@ -34,7 +34,6 @@ function CloudKeys() {
             width: 360,
             buttons: {
               "Create a Key": function() {
-                //var bValid = true;
                 if(that.create_key()) {
                   $('#dialog-form input').removeClass("ui-state-error");
                   $(this).dialog("close");
@@ -71,12 +70,48 @@ function CloudKeys() {
     $.each(this.data[index], function(index, value) {
       $('#show_keys').append($('<h3>'+ value.title +'</h3>'));
       var entry = '<p>Username: '+ value.username +'</p>';
-      entry += '<p>Password: '+ value.password +'</p>';
+      entry += '<p>Password: <i>hidden</i></p>';
       entry += '<p>Category: '+ value.category +'</p>';
       entry += '<p>Url: '+ value.url +'</p>';
       entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
       $('#show_keys').append($('<div>'+ entry +'</div>'));
       $("#editKey_"+ value.key +", #deleteKey_"+ value.key, "#keys").button();
+      $('#editKey_'+ value.key).click(function() {
+        $.get('/templates/create_key.html', function(data) {
+          $('#dialog-form').remove();
+          var message = $('<div id="dialog-form" title="Edit Key">'+ data +'</div>');
+          $('#content').append(message);
+
+          $('#create_category').val(value.category);
+          $('#create_title').val(value.title);
+          $('#create_username').val(value.username);
+          $('#create_password').val(value.password);
+          $('#create_password_repeat').val(value.password);
+          $('#create_url').val(value.url);
+          $('<input type="hidden" id="edit_key" value="'+ value.key +'" />').insertAfter($('#create_url'));
+
+          $("#dialog:ui-dialog").dialog("destroy");
+          $("#dialog-form").dialog({
+            height: 380,
+            modal: true,
+            resizable: false,
+            width: 360,
+            buttons: {
+              "Edit Key": function() {
+                if(that.save_key()) {
+                  $('#dialog-form input').removeClass("ui-state-error");
+                  $(this).dialog("close");
+                }
+              },
+              Cancel: function() {
+                $(this).dialog("close");
+              }
+            },
+          });
+          $('#edit_save').click(function() {
+          });
+        });
+      });
       $('#deleteKey_'+ value.key).click(function() {
         $('#dialog-confirm').remove();
         var message = $('<div id="dialog-confirm" title="Delete this item?"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p></div>');
@@ -116,13 +151,10 @@ function CloudKeys() {
     });
   }
 
-  this.create_key = function() {
-    var that = this;
-    var data = {};
+  this.check_fields = function() {
     var errors = 0;
     $('#dialog-form input').removeClass("ui-state-error");
     $('.missing_field').remove();
-    var errorMessage = '<span class="missing_field">!</span>';
 
     if($('#create_title').val() == '') {
       $('#create_title').addClass("ui-state-error");
@@ -149,17 +181,47 @@ function CloudKeys() {
       errors = errors + 1;
     }
 
-    if(errors == 0) {
-      var cat = '';
-      if($('#create_category').val() != '') {
-        cat = Crypto.AES.encrypt($('#create_category').val(), this.password);
-      }
-      data.category = cat;
-      data.title = Crypto.AES.encrypt($('#create_title').val(), this.password);
-      data.username = Crypto.AES.encrypt($('#create_username').val(), this.password);
-      data.password = Crypto.AES.encrypt($('#create_password').val(), this.password);
-      data.url = Crypto.AES.encrypt($('#create_url').val(), this.password);
+    return errors;
+  }
+
+  this.encrypt_data = function() {
+    var data = {};
+    var cat = '';
+    if($('#create_category').val() != '') {
+      cat = Crypto.AES.encrypt($('#create_category').val(), this.password);
+    }
+    data.category = cat;
+    data.title = Crypto.AES.encrypt($('#create_title').val(), this.password);
+    data.username = Crypto.AES.encrypt($('#create_username').val(), this.password);
+    data.password = Crypto.AES.encrypt($('#create_password').val(), this.password);
+    data.url = Crypto.AES.encrypt($('#create_url').val(), this.password);
+
+    return data;
+  }
+
+  this.save_key = function() {
+    var that = this;
+    if(this.check_fields() == 0) {
+      data = that.encrypt_data();
+      data.key = $('#edit_key').val();
+
       $.post('/api/saveKey', data, function(data) {
+        if(data.status == true) {
+          that.decrypt_data();
+          $("#dialog-modal").dialog('close');
+          window.setTimeout(function() { that.show_category($('#create_category').val()); }, 1000);
+        }
+      }, 'json');
+      return true;
+    }
+    return false;
+  }
+
+  this.create_key = function() {
+    var that = this;
+
+    if(this.check_fields() == 0) {
+      $.post('/api/saveKey', that.encrypt_data(), function(data) {
         if(data.status == true) {
           that.decrypt_data();
           $("#dialog-modal").dialog('close');
