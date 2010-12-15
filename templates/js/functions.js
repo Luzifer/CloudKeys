@@ -125,6 +125,9 @@ function CloudKeys() {
 
   this.show_category = function(index) {
     var that = this;
+    if(typeof(this.data[index]) == 'undefined') {
+      return;
+    }
     cat = index.replace(' ', '_');
     $('.show_keys').each(function() {
       var old_key = $(this).hide();
