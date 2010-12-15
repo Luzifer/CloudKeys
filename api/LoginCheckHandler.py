@@ -14,7 +14,11 @@ class LoginCheckHandler(webapp.RequestHandler):
       result['isLoggedIn'] = False
       result['status'] = True
       result['loginURL'] = users.create_login_url('/', federated_identity='google.com/accounts/o8/id')
+      result['loginURLGoogle'] = users.create_login_url('/', federated_identity='google.com/accounts/o8/id')
+      result['loginURLYahoo'] = users.create_login_url('/', federated_identity='yahoo.com')
+      result['loginURLMyOpenID'] = users.create_login_url('/', federated_identity='myopenid.com')
     else:
+      result['logoutURL'] = users.create_logout_url('/')
       result['isLoggedIn'] = True
       result['status'] = True
     
