@@ -1,4 +1,4 @@
-#list_keys #categories { float: left; width: 200px; }
+#list_keys #categories, #list_keys #button_create_key_container { float: left; width: 200px; clear:both; }
 #list_keys #keys { margin:10px auto; width: 600px; }
 #list_keys #keys h3 { height: 21px; padding: .4em 2em; }
 
