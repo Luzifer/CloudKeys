@@ -247,11 +247,6 @@ function CloudKeys() {
       errors = errors + 1;
     }
 
-    if($('#create_username').val() == '') {
-      $('#create_username').addClass("ui-state-error");
-      errors = errors + 1;
-    }
-
     if($('#create_password').val() == '') {
       $('#create_password').addClass("ui-state-error");
       errors = errors + 1;
