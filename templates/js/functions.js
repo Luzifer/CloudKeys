@@ -98,7 +98,7 @@ function CloudKeys() {
       entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
       entry += '<p>Category: '+ value.category +'</p>';
       entry += '<p id="url_'+ value.key +'">Url: '+ value.url +'</p>';
-      entry += '<p id="note_'+ value.key +'">Note: '+ value.note +'</p>';
+      entry += '<p id="note_'+ value.key +'">Note: '+ value.note.replace(/\n/g,'<br />') +'</p>';
       entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
 
       $('#show_keys').append($('<div>'+ entry +'</div>'));
@@ -142,7 +142,7 @@ function CloudKeys() {
               $('span.copy_to_clipboard').show();
             },
             buttons: {
-              "Edit Key": function() {
+              "Save": function() {
                 if(that.save_key()) {
                   $('#dialog-form input').removeClass("ui-state-error");
                   $(this).dialog("close");
