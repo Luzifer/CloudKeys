@@ -130,10 +130,10 @@ function CloudKeys() {
     }
     cat = index.replace(' ', '_');
     $('.show_keys').each(function() {
-      var old_key = $(this).hide();
-      window.setTimeout(function() {
-        old_key.remove();
-      }, 300);
+//      var old_key = $(this).hide();
+  //    window.setTimeout(function() {
+        $(this).remove();
+//      }, 300);
     });
     $('#keys').prepend('<div id="show_keys_'+ cat +'" class="show_keys"></div>');
     $.each(this.data[index].sort(sortCategory), function(index, value) {
@@ -145,7 +145,7 @@ function CloudKeys() {
       entry += '<p id="note_'+ value.key +'">Note: '+ value.note.replace(/\n/g,'<br />') +'</p>';
       entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
 
-      $('#show_keys_'+ cat).append($('<div>'+ entry +'</div>'));
+      $('#show_keys_'+ cat).append($('<div class="key_content" style="display: none;">'+ entry +'</div>'));
       $('#password_'+ value.key).append($(that.get_copy_code(value.password)));
       $('#username_'+ value.key).append($(that.get_copy_code(value.username)));
       $('#url_'+ value.key).append($(that.get_copy_code(value.url)));
@@ -230,13 +230,24 @@ function CloudKeys() {
         });
       });
     });
+    $('.show_keys > h3').each(function() {
+      $(this).button().css('width', 585);
+      $(this).click(function() {
+        if($(this).next('div').css('display') == 'none') {
+          $(this).next('div').show().siblings('div:visible').hide();
+        } else {
+          $(this).next('div').hide();
+        }
+      });
+    });
+    /*
     $(".show_keys").accordion({
       collapsible: true, active: false, animated: false
     });
     $('.show_keys .head').click(function() {
       $(this).next().toggle('slow');
       return false;
-    }).next().hide();
+    }).next().hide(); */
   }
 
   this.delete_entry = function(key) {
