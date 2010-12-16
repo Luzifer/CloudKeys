@@ -1,6 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
-
+from google.appengine.api import memcache
 from django.utils import simplejson as json
 
 from models.StoredKey import StoredKey
@@ -27,5 +27,6 @@ class DeleteKeyHandler(webapp.RequestHandler):
       else:
         result['status'] = False
         result['message'] = 'Key was empty or not set'
+      memcache.delete(str(user))
   
     self.response.out.write(json.dumps(result))

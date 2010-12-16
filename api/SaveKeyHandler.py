@@ -1,5 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
+from google.appengine.api import memcache
 from google.appengine.ext.db import Key
 
 from django.utils import simplejson as json
@@ -29,6 +30,7 @@ class SaveKeyHandler(webapp.RequestHandler):
         password = StoredKey(username = ' ', password = ' ', title = ' ')
     
       password.from_request(self.request)
-      password.save() 
+      password.save()
+      memcache.delete(str(user))
   
     self.response.out.write(json.dumps(result))
