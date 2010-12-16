@@ -63,8 +63,8 @@ function CloudKeys() {
   this.get_copy_code = function(value) {
     var code = '<span class="copy_to_clipboard"><object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="110" height="14" id="clippy">';
     code += '<param name="movie" value="/js/clippy.swf"/><param name="allowScriptAccess" value="always" /><param name="quality" value="high" />';
-    code += '<param name="scale" value="noscale" /><param NAME="FlashVars" value="text='+ value +'"><param name="bgcolor" value="#ffffff">';
-    code += '<embed src="/js/clippy.swf" width="110" height="14" name="clippy" quality="high" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" FlashVars="text='+ value +'" bgcolor="#ffffff" /></object></span>';
+    code += '<param name="scale" value="noscale" /><param NAME="FlashVars" value="text='+ encodeURIComponent(value) +'"><param name="bgcolor" value="#ffffff">';
+    code += '<embed src="/js/clippy.swf" width="110" height="14" name="clippy" quality="high" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" FlashVars="text='+ encodeURIComponent(value) +'" bgcolor="#ffffff" /></object></span>';
     return code;
   }
 
