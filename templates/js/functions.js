@@ -16,10 +16,10 @@ $(document).ready(function() {
         $('#login_myopenid').click(function() { window.location.href = data.loginURLMyOpenID }).button();
         $("#dialog:ui-dialog").dialog("destroy");
         $("#dialog-modal").dialog({
-          height: 160,
+          height: 200,
           modal: true,
           resizable: false,
-          width: 315,
+          width: 400,
           open: function(event, ui) {
             $('.show_keys span.copy_to_clipboard').hide();
           },
@@ -36,7 +36,7 @@ $(document).ready(function() {
 //        return;
       }
     } else {
-      $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="importer">Import |</div></div><br style="clear: both" />').insertBefore($('h1'));
+      $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="importer">Import |</div></div>').insertBefore($('h1'));
       $('#logout').click(function() {
         window.location.href = data.logoutURL;
       });
@@ -44,7 +44,23 @@ $(document).ready(function() {
       cc.show_password_field();
     }
   });
+  $(window).resize(function() {
+    set_content_sizes();
+  });
 });
+
+function set_content_sizes() {
+  $('#content').height(
+    $(window).height() - ($('body').height() - $('#content').height()) - 5
+  );
+  var width_content =$('#content').width();
+  var height_content = Math.floor($(window).height() - $('h1').outerHeight(true)) - 5;
+  var width_categories = $('#categories').width();
+  $('#categories').height(height_content).width(width_categories - 1);
+  var height_keys = Math.floor(height_content / 100 * 60);
+  $('#keys').height(height_keys - 6).width(width_content - width_categories);
+  $('#entry').height(height_content - height_keys).width(width_content - width_categories);
+}
 
 function sortCategory(a, b) {
   if(a.title == b.title) {
@@ -72,7 +88,18 @@ function CloudKeys() {
     var that = this;
     $.get('/templates/list_keys.html', function(data) {
       $('#content').html(data);
-      $('#button_create_key').button();
+
+      set_content_sizes();
+
+      $(document).keypress(function(event) {
+        var kc = event.charCode ? event.charCode : event.keyCode;
+        if(event.which == '106') {
+          $('#keys ul li.active').next('li').click();
+        }
+        if(event.which == '107') {
+          $('#keys ul li.active').prev('li').click();
+        }
+      });
       $('#button_create_key').click(function() {
         $.get('/templates/create_key.html', function(data) {
           $('#dialog-form').remove();
@@ -85,7 +112,7 @@ function CloudKeys() {
             resizable: false,
             width: 350,
             open: function(event, ui) {
-              $('.show_keys span.copy_to_clipboard').hide();
+              $('span.copy_to_clipboard').hide();
             },
             close: function(event, ui) {
               $('span.copy_to_clipboard').show();
@@ -114,11 +141,105 @@ function CloudKeys() {
           label = 'Empty Category';
         }
         cat = index.replace(' ', '_');
-        $('#categories').append($('<div id="category_'+ cat +'">'+ label +'</div>'));
+        $('#categories ul').append($('<li id="category_'+ cat +'">'+ label +'</li>'));
 
-        $('#category_'+ cat).button().click(function() {
+        $('#category_'+ cat).click(function() {
           that.show_category(index);
         });
+      });
+    });
+  }
+
+  this.show_entry = function(idx, key) {
+    var that = this;
+    var value = this.data[idx][key];
+    var entry = '<h3>'+ value.title +'</h3>';
+    entry += '<div class="details"><p id="username_'+ value.key +'">Username: '+ value.username +'</p>';
+    entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
+    entry += '<p>Category: '+ value.category +'</p>';
+    entry += '<p id="url_'+ value.key +'">Url: <a href="'+ value.url +'" target="_blank">'+ value.url +'</a></p>';
+    entry += '<p id="note_'+ value.key +'">Note: '+ value.note.replace(/\n/g,'<br />') +'</p>';
+    entry += '<p class="buttons"><span class="edit_button" id="editKey_'+ value.key +'">Edit</span> <span class="delete_button" id="deleteKey_'+ value.key +'">Delete</span></p></div>';
+    $('#entry').html(entry);
+    $('#password_'+ value.key).append($(that.get_copy_code(value.password)));
+    $('#username_'+ value.key).append($(that.get_copy_code(value.username)));
+    $('#url_'+ value.key).append($(that.get_copy_code(value.url)));
+    $('#note_'+ value.key).append($(that.get_copy_code(value.note)));
+    $('#editKey_'+ value.key).click(function() {
+      $.get('/templates/create_key.html', function(data) {
+        $('#dialog-form').remove();
+        var message = $('<div id="dialog-form" title="Edit Key">'+ data +'</div>');
+        $('body').prepend(message);
+
+        $('#create_category').val(value.category);
+        $('#create_title').val(value.title);
+        $('#create_username').val(value.username);
+        $('#create_password').val(value.password);
+        $('#create_password_repeat').val(value.password);
+        $('#create_url').val(value.url);
+        $('#create_note').val(value.note);
+
+        $(that.get_copy_code(value.password)).insertAfter($('#create_password'));
+        $(that.get_copy_code(value.username)).insertAfter($('#create_username'));
+        $(that.get_copy_code(value.url)).insertAfter($('#create_url'));
+        $(that.get_copy_code(value.note)).insertAfter($('#create_note'));
+
+        $('<input type="hidden" id="edit_key" value="'+ value.key +'" />').insertAfter($('#create_url'));
+
+        $("#dialog:ui-dialog").dialog("destroy");
+        $("#dialog-form").dialog({
+          height: 450,
+          modal: true,
+          resizable: false,
+          width: 470,
+          open: function(event, ui) {
+            $('span.copy_to_clipboard').hide();
+          },
+          close: function(event, ui) {
+            $('span.copy_to_clipboard').show();
+          },
+          buttons: {
+            "Save": function() {
+              if(that.save_key()) {
+                $('#dialog-form input').removeClass("ui-state-error");
+                $(this).dialog("close");
+                $('span.copy_to_clipboard').show();
+              }
+            },
+            Cancel: function() {
+              $(this).dialog("close");
+            }
+          },
+        });
+        $('#edit_save').click(function() {
+        });
+      });
+    });
+    $('#deleteKey_'+ value.key).click(function() {
+      $('#dialog-confirm').remove();
+      var message = $('<div id="dialog-confirm" title="Delete this item?"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p></div>');
+      $('#content').append(message);
+      $("#dialog-confirm").dialog({
+        resizable: false,
+        height: 240,
+        modal: true,
+        width: 400,
+        open: function(event, ui) {
+          $('span.copy_to_clipboard').hide();
+        },
+        close: function(event, ui) {
+          $('span.copy_to_clipboard').show();
+        },
+        buttons: {
+          "Delete": function() {
+            $(this).dialog( "close" );
+            that.delete_entry(value.key);
+            window.setTimeout(function() { that.show_category(value.category); }, 1000);
+          },
+          Cancel: function() {
+            $(this).dialog( "close" );
+          }
+        }
       });
     });
   }
@@ -129,125 +250,25 @@ function CloudKeys() {
       return;
     }
     cat = index.replace(' ', '_');
+    var _category = index;
+    $('#entry').empty();
     $('.show_keys').each(function() {
-//      var old_key = $(this).hide();
-  //    window.setTimeout(function() {
-        $(this).remove();
-//      }, 300);
+      $(this).remove();
     });
-    $('#keys').prepend('<div id="show_keys_'+ cat +'" class="show_keys"></div>');
-    $.each(this.data[index].sort(sortCategory), function(index, value) {
-      $('#show_keys_'+ cat).append($('<h3>'+ value.title +' <span>'+ value.username +'</span></h3>'));
-      var entry = '<p id="username_'+ value.key +'">Username: '+ value.username +'</p>';
-      entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
-      entry += '<p>Category: '+ value.category +'</p>';
-      entry += '<p id="url_'+ value.key +'">Url: <a href="'+ value.url +'" target="_blank">'+ value.url +'</a></p>';
-      entry += '<p id="note_'+ value.key +'">Note: '+ value.note.replace(/\n/g,'<br />') +'</p>';
-      entry += '<p><span id="editKey_'+ value.key +'">Edit</span> <span id="deleteKey_'+ value.key +'">Delete</span></p>';
-
-      $('#show_keys_'+ cat).append($('<div class="key_content" style="display: none;">'+ entry +'</div>'));
-      $('#password_'+ value.key).append($(that.get_copy_code(value.password)));
-      $('#username_'+ value.key).append($(that.get_copy_code(value.username)));
-      $('#url_'+ value.key).append($(that.get_copy_code(value.url)));
-      $('#note_'+ value.key).append($(that.get_copy_code(value.note)));
-
-      $("#editKey_"+ value.key +", #deleteKey_"+ value.key, "#keys").button();
-      $('#editKey_'+ value.key).click(function() {
-        $.get('/templates/create_key.html', function(data) {
-          $('#dialog-form').remove();
-          var message = $('<div id="dialog-form" title="Edit Key">'+ data +'</div>');
-          $('#content').append(message);
-
-          $('#create_category').val(value.category);
-          $('#create_title').val(value.title);
-          $('#create_username').val(value.username);
-          $('#create_password').val(value.password);
-          $('#create_password_repeat').val(value.password);
-          $('#create_url').val(value.url);
-          $('#create_note').val(value.note);
-
-          $(that.get_copy_code(value.password)).insertAfter($('#create_password'));
-          $(that.get_copy_code(value.username)).insertAfter($('#create_username'));
-          $(that.get_copy_code(value.url)).insertAfter($('#create_url'));
-          $(that.get_copy_code(value.note)).insertAfter($('#create_note'));
-
-          $('<input type="hidden" id="edit_key" value="'+ value.key +'" />').insertAfter($('#create_url'));
-
-          $("#dialog:ui-dialog").dialog("destroy");
-          $("#dialog-form").dialog({
-            height: 450,
-            modal: true,
-            resizable: false,
-            width: 470,
-            open: function(event, ui) {
-              $('.show_keys span.copy_to_clipboard').hide();
-            },
-            close: function(event, ui) {
-              $('span.copy_to_clipboard').show();
-            },
-            buttons: {
-              "Save": function() {
-                if(that.save_key()) {
-                  $('#dialog-form input').removeClass("ui-state-error");
-                  $(this).dialog("close");
-                  $('span.copy_to_clipboard').show();
-                }
-              },
-              Cancel: function() {
-                $(this).dialog("close");
-              }
-            },
-          });
-          $('#edit_save').click(function() {
-          });
+    $('#keys').prepend('<ul id="show_keys_'+ cat +'" class="show_keys"></ul>');
+    $.each(this.data[index].sort(sortCategory), function(index_cat, value) {
+      var entry = '<li>';
+      entry += value.title +' <span>'+ value.username +'</span>';
+      entry += '</li>';
+      entry = $(entry).click(function() {
+        $(this).parent().find('.active').each(function() {
+          $(this).removeClass('active');
         });
+        $(this).addClass('active');
+        that.show_entry(_category, index_cat);
       });
-      $('#deleteKey_'+ value.key).click(function() {
-        $('#dialog-confirm').remove();
-        var message = $('<div id="dialog-confirm" title="Delete this item?"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p></div>');
-        $('#content').append(message);
-        $("#dialog-confirm").dialog({
-          resizable: false,
-          height: 240,
-          modal: true,
-          width: 400,
-          open: function(event, ui) {
-            $('.show_keys span.copy_to_clipboard').hide();
-          },
-          close: function(event, ui) {
-            $('span.copy_to_clipboard').show();
-          },
-          buttons: {
-            "Delete": function() {
-              $(this).dialog( "close" );
-              that.delete_entry(value.key);
-              window.setTimeout(function() { that.show_category(value.category); }, 1000);
-            },
-            Cancel: function() {
-              $(this).dialog( "close" );
-            }
-          }
-        });
-      });
+      $('#show_keys_'+ cat).append($(entry));
     });
-    $('.show_keys > h3').each(function() {
-      $(this).button().css('width', 585);
-      $(this).click(function() {
-        if($(this).next('div').css('display') == 'none') {
-          $(this).next('div').show().siblings('div:visible').hide();
-        } else {
-          $(this).next('div').hide();
-        }
-      });
-    });
-    /*
-    $(".show_keys").accordion({
-      collapsible: true, active: false, animated: false
-    });
-    $('.show_keys .head').click(function() {
-      $(this).next().toggle('slow');
-      return false;
-    }).next().hide(); */
   }
 
   this.delete_entry = function(key) {
