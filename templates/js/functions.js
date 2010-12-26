@@ -141,14 +141,6 @@ function CloudKeys() {
 
       set_content_sizes();
 
-      $(document).keypress(function(event) {
-        if(event.which == '106') {
-          $('#keys ul li.active').next('li').click();
-        }
-        if(event.which == '107') {
-          $('#keys ul li.active').prev('li').click();
-        }
-      });
       $('#button_create_key').click(function() {
         $.get('/templates/create_key.html', function(data) {
           $('#dialog-form').remove();
@@ -513,6 +505,14 @@ function CloudKeys() {
           that.show_list();
           $(document).bind('keydown', 'ctrl+f', function() {
             that.show_search();
+          });
+          $(document).keypress(function(event) {
+            if(event.which == '106') {
+              $('#keys ul li.active').next('li').click();
+            }
+            if(event.which == '107') {
+              $('#keys ul li.active').prev('li').click();
+            }
           });
         } catch(ex) {
           that.show_password_field();
