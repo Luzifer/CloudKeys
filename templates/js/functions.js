@@ -499,10 +499,10 @@ function CloudKeys() {
                   }
                 });
               });
+              that.show_list();
               if(typeof(that.data[search_category]) == 'undefined') {
                 alert('Not found');
               } else {
-                that.show_list();
                 window.setTimeout(function() { that.show_category(search_category); }, 300);
               }
             }
