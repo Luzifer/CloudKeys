@@ -62,6 +62,17 @@ function set_content_sizes() {
   $('#entry').height(height_content - height_keys).width(width_content - width_categories);
 }
 
+function sortCategoryList(a, b) {
+  if(a == 'Search Results') return -1;
+  if(b == 'Search Results') return -1;
+  if(a == b) {
+    return 0;
+  } else if(a < b) {
+    return -1;
+  }
+  return 1;
+}
+
 function sortCategory(a, b) {
   if(a.title == b.title) {
     return 0;
@@ -92,7 +103,6 @@ function CloudKeys() {
       set_content_sizes();
 
       $(document).keypress(function(event) {
-        var kc = event.charCode ? event.charCode : event.keyCode;
         if(event.which == '106') {
           $('#keys ul li.active').next('li').click();
         }
@@ -134,14 +144,14 @@ function CloudKeys() {
         });
       });
 
-      $.each(that.data_keys.sort(), function(id, index) {
+      $.each(that.data_keys.sort(sortCategoryList), function(id, index) {
         var value = that.data[index];
         var label = index;
         if(index == '__empty__') {
           label = 'Empty Category';
         }
         cat = index.replace(' ', '_');
-        $('#categories ul').append($('<li id="category_'+ cat +'">'+ label +'</li>'));
+        $('#categories ul').append($('<li class="category_item" id="category_'+ cat +'">'+ label +'</li>'));
 
         $('#category_'+ cat).click(function() {
           that.show_category(index);
@@ -159,12 +169,22 @@ function CloudKeys() {
     entry += '<p>Category: '+ value.category +'</p>';
     entry += '<p id="url_'+ value.key +'">Url: <a href="'+ value.url +'" target="_blank">'+ value.url +'</a></p>';
     entry += '<p id="note_'+ value.key +'">Note: '+ value.note.replace(/\n/g,'<br />') +'</p>';
-    entry += '<p class="buttons"><span class="edit_button" id="editKey_'+ value.key +'">Edit</span> <span class="delete_button" id="deleteKey_'+ value.key +'">Delete</span></p></div>';
+    entry += '<p class="buttons"><span class="edit_button" id="editKey_'+ value.key +'">Edit</span> <span class="delete_button" id="deleteKey_'+ value.key +'">Delete</span> <span class="show_password_button" id="showPassword_'+ value.key +'">Show Password</span></p></div>';
     $('#entry').html(entry);
     $('#password_'+ value.key).append($(that.get_copy_code(value.password)));
     $('#username_'+ value.key).append($(that.get_copy_code(value.username)));
     $('#url_'+ value.key).append($(that.get_copy_code(value.url)));
     $('#note_'+ value.key).append($(that.get_copy_code(value.note)));
+    $('#showPassword_'+ value.key).click(function() {
+      $('#password_'+ value.key).toggleClass('active');
+      if($('#password_'+ value.key).hasClass('active')) {
+        $('#password_'+ value.key).html('Password: <pre>'+ value.password +'</pre>'+ that.get_copy_code(value.password));
+        $('#showPassword_'+ value.key).text('Hide Password');
+      } else {
+        $('#password_'+ value.key).html('Password: <i>hidden</i>' + that.get_copy_code(value.password));
+        $('#showPassword_'+ value.key).text('Show Password');
+      }
+    });
     $('#editKey_'+ value.key).click(function() {
       $.get('/templates/create_key.html', function(data) {
         $('#dialog-form').remove();
@@ -253,9 +273,10 @@ function CloudKeys() {
     var _category = index;
     $('#entry').empty();
     $('.show_keys').each(function() {
+      $(this).prev().remove();
       $(this).remove();
     });
-    $('#keys').prepend('<ul id="show_keys_'+ cat +'" class="show_keys"></ul>');
+    $('#keys').prepend('<h3>'+ _category +'</h3><ul id="show_keys_'+ cat +'" class="show_keys"></ul>');
     $.each(this.data[index].sort(sortCategory), function(index_cat, value) {
       var entry = '<li>';
       entry += value.title +' <span>'+ value.username +'</span>';
@@ -378,12 +399,12 @@ function CloudKeys() {
 
             that.data[category].push({
                 key: value.key
-              , category: enccat
-              , title: Crypto.AES.decrypt(value.title, that.password)
-              , username: Crypto.AES.decrypt(value.username, that.password)
-              , password: Crypto.AES.decrypt(value.password, that.password)
-              , url: Crypto.AES.decrypt(value.url, that.password)
-              , note: Crypto.AES.decrypt(value.note, that.password)
+              , category: enccat.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+              , title: Crypto.AES.decrypt(value.title, that.password).replace(/</g, "&lt;").replace(/>/g, "&gt;")
+              , username: Crypto.AES.decrypt(value.username, that.password).replace(/</g, "&lt;").replace(/>/g, "&gt;")
+              , password: Crypto.AES.decrypt(value.password, that.password).replace(/</g, "&lt;").replace(/>/g, "&gt;")
+              , url: Crypto.AES.decrypt(value.url, that.password).replace(/</g, "&lt;").replace(/>/g, "&gt;")
+              , note: Crypto.AES.decrypt(value.note, that.password).replace(/</g, "&lt;").replace(/>/g, "&gt;")
             });
           });
           $('#importer').click(function() {
@@ -451,6 +472,41 @@ function CloudKeys() {
           });
 
           that.show_list();
+          $(document).bind('keydown', 'ctrl+f', function() {
+            var search_term = prompt("What are you looking for?", "");
+            if(search_term != '') {
+              search_term = new RegExp(search_term, 'i');
+              search_category = 'Search Results';
+              if(typeof(that.data[search_category]) != 'undefined') {
+                delete that.data[search_category];
+                $.each(that.data_keys, function(index, value) {
+                  if(value == search_category) {
+                    that.data_keys.splice(index, 1);
+                  }
+                });
+              }
+
+              $.each(that.data, function(key, value) {
+                $.each(value, function(idx, val) {
+                  if(val.title.search(search_term) >= 0) {
+    
+                    if(typeof(that.data[search_category]) == 'undefined') {
+                      that.data[search_category] = [];
+                      that.data_keys.push(search_category);
+                    }
+        
+                    that.data[search_category].push(val);
+                  }
+                });
+              });
+              if(typeof(that.data[search_category]) == 'undefined') {
+                alert('Not found');
+              } else {
+                that.show_list();
+                window.setTimeout(function() { that.show_category(search_category); }, 300);
+              }
+            }
+          });
         } catch(ex) {
           that.show_password_field();
           $('#dialog-modal').remove();

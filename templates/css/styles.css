@@ -1,23 +1,32 @@
 body { font-family: sans-serif; height: 100%; margin: 0px; min-height: 100%; padding: 0px; }
-h1 { margin: 0; padding: 0; }
+h1 { margin: 0; padding: 0 0 0 15px; }
 #content { margin: 0; overflow: hidden; padding: 0; }
 #header_links { color: #111; float: right; padding: 10px 10px 0 0; text-align: right; }
 #logout, #importer { cursor: pointer; float: right; }
+#importer { color: #d3d3d3; }
 #list_keys { background-color: #323232; margin: 0; padding: 1px 0 0 0; }
 #list_keys #categories, #list_keys #keys, #list_keys #entry { background-color: #ffffff; }
 #list_keys #categories { float: left; overflow: auto; width: 15%; }
+#list_keys #categories #button_create_key { background: transparent url('/images/add.png') no-repeat 2px left; font-weight: bold; padding-left: 20px; }
 #list_keys #categories ul { list-style-type: none; margin: 0; padding: 5px 10px 0 15px; }
 #list_keys #categories ul li { cursor: pointer; margin: 0; padding: 0; }
+#list_keys #categories ul li.category_item { background: transparent url('/images/book.png') no-repeat 2px left; padding-left: 20px; }
 #list_keys #keys { float: right; overflow: auto; padding-bottom: 5px; width: 80%; }
+#list_keys #keys h3 { background-color: #c3c3c3; margin: 0; padding: 3px 20px; }
 #list_keys #keys ul { list-style-type: none; margin: 0; padding: 5px 10px 0 10px; }
 #list_keys #keys ul li { border-bottom: 1px dotted #ebebeb; cursor: pointer; margin: 0; padding: 0 5px 0 10px; }
 #list_keys #keys ul li span { color: #666666; font-size: 66%; font-style: italic; margin-left: 10px; }
 #list_keys #keys ul li.active { background-color: #d3d3d3; }
 #list_keys #entry { float: right; margin-top: 1px; overflow: auto; width: 80%; }
-#list_keys #entry div.details { padding: 5px; }
+#list_keys #entry div.details { padding: 20px; }
 #list_keys #entry p { margin: 1px; padding: 0px; }
 #list_keys #entry p .copy_to_clipboard { margin-left: 5px; }
-#list_keys #entry h3 { background-color: #c3c3c3; margin: 0; padding: 3px 5px; }
+#list_keys #entry h3 { background-color: #c3c3c3; margin: 0; padding: 3px 20px; }
 #list_keys #entry div.details .edit_button,
-#list_keys #entry div.details .delete_button { background-color: #c3c3c3; border: 1px solid black; padding: 5px; }
-#list_keys #entry div.details .buttons { clear: both; height: 25px; padding-top: 10px; }
+#list_keys #entry div.details .delete_button,
+#list_keys #entry div.details .show_password_button { background-color: #c3c3c3; border: 1px solid black; cursor: pointer; padding: 5px; }
+#list_keys #entry div.details .buttons { clear: both; height: 30px; padding-top: 15px; }
+#list_keys #entry div.details pre { display: inline; }
+
+#password_field { background-color: #ebebeb; border: 1px solid darkgrey; margin: 30px auto; padding: 40px; width: 300px; }
+#password_field #input_password { margin-left: 10px; }
