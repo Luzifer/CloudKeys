@@ -2,8 +2,8 @@ body { font-family: sans-serif; height: 100%; margin: 0px; min-height: 100%; pad
 h1 { margin: 0; padding: 0 0 0 15px; }
 #content { margin: 0; overflow: hidden; padding: 0; }
 #header_links { color: #111; float: right; padding: 10px 10px 0 0; text-align: right; }
-#logout, #importer { cursor: pointer; float: right; }
-#importer { color: #d3d3d3; }
+#logout, #importer, #searcher { cursor: pointer; float: right; }
+#importer, #searcher { color: #d3d3d3; }
 #list_keys { background-color: #323232; margin: 0; padding: 1px 0 0 0; }
 #list_keys #categories, #list_keys #keys, #list_keys #entry { background-color: #ffffff; }
 #list_keys #categories { float: left; overflow: auto; width: 15%; }

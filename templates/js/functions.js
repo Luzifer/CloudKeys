@@ -32,22 +32,25 @@ $(document).ready(function() {
             }
           },
         });
-//        window.location.href = data.loginURL;
-//        return;
       }
     } else {
-      $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="importer">Import |</div></div>').insertBefore($('h1'));
+      $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="importer">&nbsp;Import |</div><div id="searcher">&nbsp;Search |</div></div>').insertBefore($('h1'));
       $('#logout').click(function() {
         window.location.href = data.logoutURL;
       });
       var cc = new CloudKeys();
       cc.show_password_field();
+
+      $('#searcher').click(function() {
+        cc.show_search();
+      });
     }
   });
   $(window).resize(function() {
     set_content_sizes();
   });
 });
+
 
 function set_content_sizes() {
   $('#content').height(
@@ -93,6 +96,42 @@ function CloudKeys() {
     code += '<param name="scale" value="noscale" /><param NAME="FlashVars" value="text='+ encodeURIComponent(value) +'"><param name="bgcolor" value="#ffffff">';
     code += '<embed src="/js/clippy.swf" width="110" height="14" name="clippy" quality="high" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" FlashVars="text='+ encodeURIComponent(value) +'" bgcolor="#ffffff" /></object></span>';
     return code;
+  }
+
+  this.show_search = function() {
+    var that = this;
+    var search_term = prompt("What are you looking for?", "");
+    if(search_term != '') {
+      search_term = new RegExp(search_term, 'i');
+      search_category = 'Search Results';
+      if(typeof(that.data[search_category]) != 'undefined') {
+        delete that.data[search_category];
+        $.each(that.data_keys, function(index, value) {
+          if(value == search_category) {
+            that.data_keys.splice(index, 1);
+          }
+        });
+      }
+  
+      $.each(that.data, function(key, value) {
+        $.each(value, function(idx, val) {
+          if(val.title.search(search_term) >= 0 || val.username.search(search_term) >= 0 || val.note.search(search_term) >= 0 || val.url.search(search_term) >= 0) {
+            if(typeof(that.data[search_category]) == 'undefined') {
+              that.data[search_category] = [];
+              that.data_keys.push(search_category);
+            }
+    
+            that.data[search_category].push(val);
+          }
+        });
+      });
+      that.show_list();
+      if(typeof(that.data[search_category]) == 'undefined') {
+        alert('Not found');
+      } else {
+        window.setTimeout(function() { that.show_category(search_category); }, 300);
+      }
+    }
   }
 
   this.show_list = function() {
@@ -473,39 +512,7 @@ function CloudKeys() {
 
           that.show_list();
           $(document).bind('keydown', 'ctrl+f', function() {
-            var search_term = prompt("What are you looking for?", "");
-            if(search_term != '') {
-              search_term = new RegExp(search_term, 'i');
-              search_category = 'Search Results';
-              if(typeof(that.data[search_category]) != 'undefined') {
-                delete that.data[search_category];
-                $.each(that.data_keys, function(index, value) {
-                  if(value == search_category) {
-                    that.data_keys.splice(index, 1);
-                  }
-                });
-              }
-
-              $.each(that.data, function(key, value) {
-                $.each(value, function(idx, val) {
-                  if(val.title.search(search_term) >= 0) {
-    
-                    if(typeof(that.data[search_category]) == 'undefined') {
-                      that.data[search_category] = [];
-                      that.data_keys.push(search_category);
-                    }
-        
-                    that.data[search_category].push(val);
-                  }
-                });
-              });
-              that.show_list();
-              if(typeof(that.data[search_category]) == 'undefined') {
-                alert('Not found');
-              } else {
-                window.setTimeout(function() { that.show_category(search_category); }, 300);
-              }
-            }
+            that.show_search();
           });
         } catch(ex) {
           that.show_password_field();
