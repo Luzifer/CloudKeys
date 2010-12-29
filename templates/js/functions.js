@@ -10,6 +10,8 @@ $(document).ready(function() {
   } else {
     $('head').append($('<link rel="stylesheet" type="text/css" href="/css/styles.css" media="screen" />'));
     $('head').append($('<script type="text/javascript" src="/js/jquery.xmldom-1.0.min.js"></script>'));
+    $('head').append($('<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css" rel="stylesheet" />'));
+    $('head').append($('<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>'));
   }
   $.getJSON('/api/isLoggedIn', function(data) {
     if(data.isLoggedIn == false) {
@@ -189,11 +191,13 @@ function CloudKeys() {
     $.get('/templates/list_keys.html', function(data) {
       $('#content').html(data);
       if(isMobile) {
+        $('#categories').show();
         $('#keys').hide();
         $('#entry').hide();
+        $('#back_button').remove();
+      } else {
+        set_content_sizes();
       }
-
-      set_content_sizes();
 
       $('#button_create_key').click(function() {
         $.get('/templates/create_key.html', function(data) {
@@ -248,6 +252,19 @@ function CloudKeys() {
   this.show_entry = function(idx, key) {
     var that = this;
     var value = this.data[idx][key];
+
+    if(isMobile) {
+      $('#categories').hide();
+      $('#keys').hide();
+      $('#entry').show();
+
+      $('#back_button').remove();
+      $('<div id="back_button">Back</div>').insertBefore($('h1'));
+      $('#back_button').click(function() {
+        that.show_category(value.category);
+      });
+    }
+
     var entry = '<h3>'+ value.title +'</h3>';
     entry += '<div class="details"><p id="username_'+ value.key +'">Username: '+ value.username +'</p>';
     entry += '<p id="password_'+ value.key +'">Password: <i>hidden</i></p>';
@@ -359,6 +376,12 @@ function CloudKeys() {
       $('#categories').hide();
       $('#keys').show();
       $('#entry').hide();
+
+      $('#back_button').remove();
+      $('<div id="back_button">Back</div>').insertBefore($('h1'));
+      $('#back_button').click(function() {
+        that.show_list();
+      });
     }
 
     cat = index.replace(' ', '_');
