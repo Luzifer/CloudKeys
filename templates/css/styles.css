@@ -1,6 +1,9 @@
 body { font-family: sans-serif; height: 100%; margin: 0px; min-height: 100%; padding: 0px; }
 h1 { margin: 0; padding: 0 0 0 15px; }
-#content { margin: 0; overflow: hidden; padding: 0; }
+#login_buttons { margin: 10px auto; width: 200px; }
+#login_google { background: transparent url('/images/signin_google.png') no-repeat top left; cursor: pointer; float: left; height: 31px; text-indent: -19999px; width: 93px; }
+#login_yahoo { background: transparent url('/images/signin_yahoo.png') no-repeat top left; cursor: pointer; float: left; height: 31px; margin-left: 5px; text-indent: -19999px; width: 93px; }
+#login_myopenid { display: none; }#content { margin: 0; overflow: hidden; padding: 0; }
 #header_links { color: #111; float: right; padding: 10px 10px 0 0; text-align: right; }
 #logout, #importer, #searcher { cursor: pointer; float: right; }
 #importer, #searcher { color: #d3d3d3; }

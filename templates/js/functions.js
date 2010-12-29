@@ -1,9 +1,22 @@
+var isMobile = false;
 $(document).ready(function() {
+  if(jQuery.browser.mobile) {
+    isMobile = true;
+  }
+//  isMobile = true;
+
+  if(isMobile) {
+    $('head').append($('<link rel="stylesheet" type="text/css" href="/css/mobile.css" media="screen" />'));
+  } else {
+    $('head').append($('<link rel="stylesheet" type="text/css" href="/css/styles.css" media="screen" />'));
+    $('head').append($('<script type="text/javascript" src="/js/jquery.xmldom-1.0.min.js"></script>'));
+  }
   $.getJSON('/api/isLoggedIn', function(data) {
     if(data.isLoggedIn == false) {
       if(typeof(data.loginURL) != 'undefined' && data.loginURL != '') {
-        $('#dialog-modal').remove();
-        var code = '<div id="dialog-modal" title="Choose Login Service">';
+//        $('#dialog-modal').remove();
+//        var code = '<div id="dialog-modal" title="Choose Login Service">';
+        var code = '<div id="login_buttons">';
         code += '<div id="login_google">Google</div>';
         code += '<div id="login_yahoo">Yahoo</div>';
         code += '<div id="login_myopenid">MyOpenID</div>';
@@ -11,9 +24,10 @@ $(document).ready(function() {
 
         var message = $(code);
         $('#content').append(message);
-        $('#login_google').click(function() { window.location.href = data.loginURLGoogle }).button();
-        $('#login_yahoo').click(function() { window.location.href = data.loginURLYahoo }).button();
-        $('#login_myopenid').click(function() { window.location.href = data.loginURLMyOpenID }).button();
+        $('#login_google').click(function() { window.location.href = data.loginURLGoogle });
+        $('#login_yahoo').click(function() { window.location.href = data.loginURLYahoo });
+        $('#login_myopenid').click(function() { window.location.href = data.loginURLMyOpenID });
+        /*
         $("#dialog:ui-dialog").dialog("destroy");
         $("#dialog-modal").dialog({
           height: 200,
@@ -31,7 +45,7 @@ $(document).ready(function() {
               $(this).dialog("close");
             }
           },
-        });
+        }); */
       }
     } else {
       $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="importer">&nbsp;Import |</div><div id="searcher">&nbsp;Search |</div></div>').insertBefore($('h1'));
@@ -46,9 +60,11 @@ $(document).ready(function() {
       });
     }
   });
-  $(window).resize(function() {
-    set_content_sizes();
-  });
+  if(!isMobile) {
+    $(window).resize(function() {
+      set_content_sizes();
+    });
+  }
 });
 
 
@@ -138,6 +154,10 @@ function CloudKeys() {
     var that = this;
     $.get('/templates/list_keys.html', function(data) {
       $('#content').html(data);
+      if(isMobile) {
+        $('#keys').hide();
+        $('#entry').hide();
+      }
 
       set_content_sizes();
 
@@ -300,6 +320,13 @@ function CloudKeys() {
     if(typeof(this.data[index]) == 'undefined') {
       return;
     }
+
+    if(isMobile) {
+      $('#categories').hide();
+      $('#keys').show();
+      $('#entry').hide();
+    }
+
     cat = index.replace(' ', '_');
     var _category = index;
     $('#entry').empty();
