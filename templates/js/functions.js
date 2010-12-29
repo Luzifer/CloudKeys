@@ -44,6 +44,8 @@ $(document).ready(function() {
       $('#searcher').click(function() {
         cc.show_search();
       });
+      
+      setTimeout('is_still_loggedin()', 60000);
     }
   });
   $(window).resize(function() {
@@ -83,6 +85,38 @@ function sortCategory(a, b) {
     return -1;
   }
   return 1;
+}
+
+function is_still_loggedin() {
+  $.getJSON('/api/isLoggedIn', function(data) {
+    if(data.isLoggedIn == false) {
+      // If the user was logged out through cookie timeout or similar
+      // new key creation will fail so send him back to login form before
+      // he tries to create a new key.
+      $('#dialog-confirm').remove();
+      var message = $('<div id="dialog-confirm" title="You have been logged out!"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Your session expired and you will have to login again.</p></div>');
+      $('#content').append(message);
+      $("#dialog-confirm").dialog({
+        resizable: false,
+        height: 240,
+        modal: true,
+        width: 400,
+        open: function(event, ui) {
+          $('span.copy_to_clipboard').hide();
+        },
+        close: function(event, ui) {
+          window.location.reload();
+        },
+        buttons: {
+          "OK": function() {
+            $(this).dialog( "close" );
+          }
+        }
+      });
+    } else {
+      setTimeout('is_still_loggedin()', 60000);
+    }
+  });
 }
 
 function CloudKeys() {
