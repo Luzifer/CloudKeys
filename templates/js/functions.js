@@ -16,8 +16,10 @@ $(document).ready(function() {
   $.getJSON('/api/isLoggedIn', function(data) {
     if(data.isLoggedIn == false) {
       if(typeof(data.loginURL) != 'undefined' && data.loginURL != '') {
+        window.location.href = data.loginURLGoogle;
 //        $('#dialog-modal').remove();
 //        var code = '<div id="dialog-modal" title="Choose Login Service">';
+/*
         var code = '<div id="login_buttons">';
         code += '<div id="login_google">Google</div>';
         code += '<div id="login_yahoo">Yahoo</div>';
