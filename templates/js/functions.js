@@ -2,6 +2,7 @@ var isMobile = false;
 $(document).ready(function() {
   if(jQuery.browser.mobile) {
     isMobile = true;
+    window.location.href="/m/";
   }
 //  isMobile = true;
 

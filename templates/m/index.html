@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
+    <script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.0.0-crypto-sha1-hmac-pbkdf2-ofb-aes.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/templates/m/mobile.js"></script>
+  </head>
+  <body>
+    <div id="login" data-role="page" data-theme="b">
+      <div data-role="header">
+        <h1>Cloudkeys</h1>
+      </div>
+      <div data-role="content">
+        <p style="text-align:center;">
+          Please sign in using your master password to unlock your passwords:
+        </p>
+        <p>
+          <input type="password" name="password" value="" id="password" />
+        </p>
+        <p>
+          <a href="#categories" data-role="button" id="loginbtn">Login</a>
+        </p>
+      </div>
+    </div>
+    
+    <div id="categories" data-role="page"  data-theme="b">
+      <div data-role="header">
+        <a href="#login" rel="external" id="lock" data-rel="back" data-icon="gear">Lock</a>
+        <h1>Categories</h1>
+      </div>
+      <ul data-role="listview" id="catslist">
+        <li><a href="#keyindex">Test</a></li>
+      </ul>
+    </div>
+    
+    <div id="keyindex" data-role="page"  data-theme="b">
+      <div data-role="header">
+        <a href="#categories" rel="external" data-rel="back" data-icon="arrow-l">Back</a>
+        <h1>Keys</h1>
+      </div>
+      <ul data-role="listview" id="keyslist">
+        <li data-role="list-divider">T</li>
+        <li><a href="#password">Test</a></li>
+      </ul>
+    </div>
+    
+    <div id="passwordview" data-role="page" data-theme="b">
+      <div data-role="header">
+        <a href="#keyindex" data-rel="back" data-icon="arrow-l">Back</a>
+        <h1 class="data_title">Title</h1>
+      </div>
+      <div data-role="content">
+        <h3>Username:</h3>
+        <p class="data_user">tesuser</p>
+        <h3>Password:</h3>
+        <p class="data_pass">****</p>
+        <h3>URL:</h3>
+        <p class="data_url">http://...</p>
+        <h3>Note:</h3>
+        <p class="data_note">Lorem ipsum...</p>
+      </div>
+    </div>
+    
+    <div id="wrongpwd" data-role="page" data-theme="b">
+      <div data-role="content">
+        <p>
+          The password you have entered was wrong.
+        </p>
+        <a href="#login" data-role="button">Retry</a>
+      </div>
+    </div>
+  </body>
+</html>

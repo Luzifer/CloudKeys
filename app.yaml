@@ -30,6 +30,10 @@ handlers:
 - url: /
   static_files: templates/index.html
   upload: templates/index.html
+  
+- url: /m/
+  static_files: templates/m/index.html
+  upload: templates/m/index.html
 
 - url: /templates/(.*)
   static_files: templates/\1
