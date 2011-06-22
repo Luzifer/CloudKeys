@@ -38,6 +38,7 @@ $(function(){
 });
 
 function loadentries() {
+  $.mobile.showPageLoadingMsg();
   $.getJSON('/api/getKeys', function(data) {
     if(data.status == true) {
       try {
@@ -81,6 +82,7 @@ function loadentries() {
           $('#catslist').append(cat);
         });
         $('#catslist').listview('refresh');
+        $.mobile.hidePageLoadingMsg();
         
       } catch(ex) {
         $.mobile.changePage($('#wrongpwd'), {
@@ -117,11 +119,11 @@ function loaddetails() {
   $.each(pwddata[cat].sort(sortCategory), function(i, val){
     if(val.key != key) { return; }
     
-    $('.data_user').text(val.username);
-    $('.data_pass').text(val.password);
-    $('.data_url').text(val.url);
-    $('.data_note').text(val.note);
-    $('.data_title').text(val.title);
+    $('.data_user>p').html(val.username);
+    $('.data_pass>p').html(val.password);
+    $('.data_url>p').html(val.url);
+    $('.data_note>p').html(val.note.replace(/\n/g,'<br />'));
+    $('.data_title>p').html(val.title);
     $.mobile.changePage($('#passwordview'));
     return;
   });
