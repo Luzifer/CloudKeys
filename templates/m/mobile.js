@@ -31,6 +31,9 @@ $(function(){
   $('#lock').bind('tap', function(){
     pass = undefined;
     $('#password').val('');
+    $('#keyslist').empty();
+    $('#catslist').empty();
+    $('[class^="data_"]').text('');
   })
 });
 
