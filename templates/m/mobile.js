@@ -71,7 +71,7 @@ function loadentries() {
         });
         
         $('#catslist').empty();
-        for(var i = 0; i < pwddata_keys.length; i++) {
+        $.each(pwddata_keys.sort(sortCategoryList), function(i, val){
           var cat = $('<li></li>');
           var link = $('<a href="javascript:void(0);"></a>');
           link.attr('cat', pwddata_keys[i]);
@@ -79,7 +79,7 @@ function loadentries() {
           cat.append(link);
           link.bind('tap', loadkeys);
           $('#catslist').append(cat);
-        }
+        });
         $('#catslist').listview('refresh');
         
       } catch(ex) {
@@ -97,8 +97,7 @@ function loadentries() {
 function loadkeys() {
   var cat = $(this).attr('cat');
   $('#keyslist').empty();
-  for(var i = 0; i < pwddata[cat].length; i++) {
-    var val = pwddata[cat][i];
+  $.each(pwddata[cat].sort(sortCategory), function(i, val){
     var entry = $('<li></li>');
     var link = $('<a href="javascript:void(0);"></a>');
     link.attr('cat', cat);
@@ -107,7 +106,7 @@ function loadkeys() {
     entry.append(link);
     link.bind('tap', loaddetails);
     $('#keyslist').append(entry);
-  }
+  });
   $.mobile.changePage($('#keyindex'));
   $('#keyslist').listview('refresh');
 }
@@ -115,9 +114,8 @@ function loadkeys() {
 function loaddetails() {
   var cat = $(this).attr('cat');
   var key = $(this).attr('key');
-  for(var i = 0; i < pwddata[cat].length; i++) {
-    var val = pwddata[cat][i];
-    if(val.key != key) { continue; }
+  $.each(pwddata[cat].sort(sortCategory), function(i, val){
+    if(val.key != key) { return; }
     
     $('.data_user').text(val.username);
     $('.data_pass').text(val.password);
@@ -125,6 +123,24 @@ function loaddetails() {
     $('.data_note').text(val.note);
     $('.data_title').text(val.title);
     $.mobile.changePage($('#passwordview'));
-    break;
+    return;
+  });
+}
+
+function sortCategoryList(a, b) {
+  if(a == b) {
+    return 0;
+  } else if(a < b) {
+    return -1;
   }
+  return 1;
+}
+
+function sortCategory(a, b) {
+  if(a.title == b.title) {
+    return 0;
+  } else if(a.title < b.title) {
+    return -1;
+  }
+  return 1;
 }
