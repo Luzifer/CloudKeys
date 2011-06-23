@@ -154,6 +154,7 @@ function loaddetails() {
     
     $('.data_user>p').html(val.username);
     $('.data_pass>a').attr('pwd', val.password);
+    $('.data_pass>a').text('Show it!');
     $('.data_url>p').html(val.url);
     $('.data_note>p').html(val.note.replace(/\n/g,'<br />'));
     $('.data_title').html(val.title);
