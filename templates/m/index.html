@@ -55,9 +55,9 @@
           <h3>Username:</h3>
           <p></p>
         </div>
-        <div class="data_pass">
+        <div>
           <h3>Password:</h3>
-          <a href="#" data-role="button" id="pwdbtn">Show it!</a>
+          <a href="#showpassword" data-role="button" data-rel="dialog">Show it!</a>
         </div>
         <div class="data_url">
           <h3>URL:</h3>
@@ -86,6 +86,13 @@
           after 120 seconds of inactivity.
         </p>
         <a href="#login" data-role="button">Login again</a>
+      </div>
+    </div>
+    
+    <div id="showpassword" data-role="page" data-theme="b">
+      <div data-role="content">
+        <p style="text-align:center; font-size:1.5em; padding:20px 0;" class="data_pass"></p>
+        <a href="#passwordview" data-role="button" data-rel="back">Back</a>
       </div>
     </div>
   </body>
