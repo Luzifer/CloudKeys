@@ -109,6 +109,7 @@ function loadkeys() {
     link.bind('tap', loaddetails);
     $('#keyslist').append(entry);
   });
+  $('.data_keystitle').html(cat);
   $.mobile.changePage($('#keyindex'));
   $('#keyslist').listview('refresh');
 }
@@ -123,7 +124,7 @@ function loaddetails() {
     $('.data_pass>p').html(val.password);
     $('.data_url>p').html(val.url);
     $('.data_note>p').html(val.note.replace(/\n/g,'<br />'));
-    $('.data_title>p').html(val.title);
+    $('.data_title').html(val.title);
     $.mobile.changePage($('#passwordview'));
     return;
   });
