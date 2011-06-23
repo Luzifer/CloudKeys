@@ -34,7 +34,15 @@ $(function(){
     $('#keyslist').empty();
     $('#catslist').empty();
     $('[class^="data_"]').text('');
-  })
+  });
+  
+  $('#pwdbtn').bind('tap', function(){
+    if($(this).text() == $(this).attr('pwd')) {
+      $(this).text('Show it!');
+    } else {
+      $(this).text($(this).attr('pwd'));
+    }
+  });
 });
 
 function loadentries() {
@@ -121,7 +129,7 @@ function loaddetails() {
     if(val.key != key) { return; }
     
     $('.data_user>p').html(val.username);
-    $('.data_pass>p').html(val.password);
+    $('.data_pass>a').attr('pwd', val.password);
     $('.data_url>p').html(val.url);
     $('.data_note>p').html(val.note.replace(/\n/g,'<br />'));
     $('.data_title').html(val.title);
