@@ -2,6 +2,8 @@ var pass = undefined;
 var pwddata = undefined;
 var pwddata_keys = undefined;
 
+var locktimer = undefined;
+
 $(document).bind("mobileinit", function(){
   
   $.mobile.nonHistorySelectors = "secret";
@@ -29,11 +31,7 @@ $(function(){
   });
   
   $('#lock').bind('tap', function(){
-    pass = undefined;
-    $('#password').val('');
-    $('#keyslist').empty();
-    $('#catslist').empty();
-    $('[class^="data_"]').text('');
+    lockdata();
   });
   
   $('#pwdbtn').bind('tap', function(){
@@ -43,7 +41,33 @@ $(function(){
       $(this).text($(this).attr('pwd'));
     }
   });
+  
+  $('*').bind('tap', function(){
+    if(locktimer != undefined) {
+      clearTimeout(locktimer);
+    }
+    locktimer = setTimeout("lock()", 120000);
+  });
+  
 });
+
+function lock() {
+  locktimer = undefined;
+  $.mobile.changePage($('#autolock'), {
+    'role' : 'dialog',
+    'changeHash' : false
+  });
+  setTimeout("lockdata()", 2000);
+}
+
+function lockdata() {
+  pass = undefined;
+  $('#password').val('');
+  $('#keyslist').empty();
+  $('#catslist').empty();
+  $('[class^="data_"]>p').text('');
+  $('[class^="data_"]>a').text('Show it!');
+}
 
 function loadentries() {
   $.mobile.showPageLoadingMsg();
