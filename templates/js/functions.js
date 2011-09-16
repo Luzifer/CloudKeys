@@ -17,40 +17,7 @@ $(document).ready(function() {
   $.getJSON('/api/isLoggedIn', function(data) {
     if(data.isLoggedIn == false) {
       if(typeof(data.loginURL) != 'undefined' && data.loginURL != '') {
-        window.location.href = data.loginURLGoogle;
-//        $('#dialog-modal').remove();
-//        var code = '<div id="dialog-modal" title="Choose Login Service">';
-/*
-        var code = '<div id="login_buttons">';
-        code += '<div id="login_google">Google</div>';
-        code += '<div id="login_yahoo">Yahoo</div>';
-        code += '<div id="login_myopenid">MyOpenID</div>';
-        code += '</div>';
-
-        var message = $(code);
-        $('#content').append(message);
-        $('#login_google').click(function() { window.location.href = data.loginURLGoogle });
-        $('#login_yahoo').click(function() { window.location.href = data.loginURLYahoo });
-        $('#login_myopenid').click(function() { window.location.href = data.loginURLMyOpenID });
-        /*
-        $("#dialog:ui-dialog").dialog("destroy");
-        $("#dialog-modal").dialog({
-          height: 200,
-          modal: true,
-          resizable: false,
-          width: 400,
-          open: function(event, ui) {
-            $('.show_keys span.copy_to_clipboard').hide();
-          },
-          close: function(event, ui) {
-            $('span.copy_to_clipboard').show();
-          },
-          buttons: {
-            Cancel: function() {
-              $(this).dialog("close");
-            }
-          },
-        }); */
+        window.location.href = data.loginURL;
       }
     } else {
       $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="importer">&nbsp;Import |</div><div id="searcher">&nbsp;Search |</div></div>').insertBefore($('h1'));
