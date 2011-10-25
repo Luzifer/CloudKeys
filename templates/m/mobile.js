@@ -13,7 +13,7 @@ $(function(){
   $.getJSON('/api/isLoggedIn', function(data) {
     if(data.isLoggedIn == false) {
       if(typeof(data.loginURL) != 'undefined' && data.loginURL != '') {
-        window.location.href = data.loginURLGoogle;
+        window.location.href = data.loginURL;
       }
     }
   });
