@@ -20,7 +20,7 @@ $(document).ready(function() {
         window.location.href = data.loginURL;
       }
     } else {
-      $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="importer">&nbsp;Import |</div><div id="searcher">&nbsp;Search |</div></div>').insertBefore($('h1'));
+      $('<div id="header_links"><div id="logout">&nbsp;Logout</div><div id="exporter">&nbsp;Export |</div><div id="importer">&nbsp;Import |</div><div id="searcher">&nbsp;Search |</div></div>').insertBefore($('h1'));
       $('#logout').click(function() {
         window.location.href = data.logoutURL;
       });
@@ -490,6 +490,46 @@ function CloudKeys() {
               , password: Crypto.AES.decrypt(value.password, that.password).replace(/</g, "&lt;").replace(/>/g, "&gt;")
               , url: Crypto.AES.decrypt(value.url, that.password).replace(/</g, "&lt;").replace(/>/g, "&gt;")
               , note: Crypto.AES.decrypt(value.note, that.password).replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            });
+          });
+          $('#exporter').click(function() {
+            $('#dialog-modal').remove();
+
+            var export_content = "<!DOCTYPE KEEPASSX_DATABASE>\n<database>\n";
+            $.each(that.data, function(cat_id, cat_data) {
+              export_content += "<group>\n<title>"+ cat_id +"</title>\n";
+              $.each(cat_data, function(entry_id, entry_content) {
+                export_content += "<entry>\n";
+                export_content += "<title><![CDATA["+ entry_content['title'] +"]]></title>\n";
+                export_content += "<username><![CDATA["+ entry_content['username'] +"]]></username>\n";
+                export_content += "<password><![CDATA["+ entry_content['password'] +"]]></password>\n";
+                export_content += "<url><![CDATA["+ entry_content['url'] +"]]></url>\n";
+                export_content += "<comment><![CDATA["+ entry_content['note'] +"]]></comment>\n";
+                export_content += "</entry>\n";
+              });
+              export_content += "</group>\n";
+            });
+            export_content += "</database>\n";
+
+            var message = $('<div id="dialog-modal" title="Export as KeePassX XML File"><textarea cols="45" rows="5" id="exporter_field">'+ export_content +'</textarea></div>');
+            $('#content').append(message);
+            $("#dialog:ui-dialog").dialog("destroy");
+            $("#dialog-modal").dialog({
+              height: 240,
+              modal: true,
+              resizable: false,
+              width: 400,
+              open: function(event, ui) {
+                $('.show_keys span.copy_to_clipboard').hide();
+              },
+              close: function(event, ui) {
+                $('span.copy_to_clipboard').show();
+              },
+              buttons: {
+                Cancel: function() {
+                  $(this).dialog("close");
+                }
+              }
             });
           });
           $('#importer').click(function() {
