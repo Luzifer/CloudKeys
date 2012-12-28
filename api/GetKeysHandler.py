@@ -28,7 +28,7 @@ class GetKeysHandler(webapp.RequestHandler):
         result['passwords'] = []
         for password in passwords:
           result['passwords'].append(password.to_d())
-        memcache.set(unique_id, json.dumps(result['passwords']))
+        #memcache.set(unique_id, json.dumps(result['passwords']))
       else:
         result['passwords'] = json.loads(data)
   
