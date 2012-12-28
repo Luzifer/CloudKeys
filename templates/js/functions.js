@@ -433,7 +433,7 @@ function CloudKeys() {
 
       $.post('/api/saveKey', data, function(data) {
         if(data.status == true) {
-          window.setTimeout(function() { that.decrypt_data(); }, 500);
+          that.decrypt_data();
           $("#dialog-modal").dialog('close');
           window.setTimeout(function() { that.show_category($('#create_category').val()); }, 1000);
         }
