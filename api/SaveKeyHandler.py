@@ -32,11 +32,5 @@ class SaveKeyHandler(webapp.RequestHandler):
       password.from_request(self.request)
       password.save()
       memcache.delete(str(user))
-
-      passwords = StoredKey.all().filter('user = ', user)
-      pwdcache = {'passwords': [], 'status': True}
-      for password in passwords:
-        pwdcache['passwords'].append(password.to_d())
-      memcache.set(str(user), json.dumps(pwdcache['passwords']))
   
     self.response.out.write(json.dumps(result))
